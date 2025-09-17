@@ -16,3 +16,54 @@ O usuário vai ter disponível um mapa, informando com marcadores as localizaç�
     <img src="https://cdn.jsdelivr.net/gh/devicons/devicon@latest/icons/firebase/firebase-original.svg" width="85" height="85"  />    
   </div>
 </div>
+
+## :art: Telas
+
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Home.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Login.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Login%20(2).png" 
+         width="30%"  />
+  </div>
+</div>
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Lista%20de%20p%C3%A1ginas.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20de%20assalto.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20de%20assalto%202.png" 
+         width="30%"  />
+  </div>
+</div>
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20de%20roubo.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20de%20sgress%C3%A3o.png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20outros.png" 
+         width="30%"  />
+  </div>
+</div>
+<div style="text-align: center">
+  <div style="display: inline-block;">
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20outros%20(2).png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Cadastro%20de%20ocorr%C3%AAncia%20outros%20(3).png" 
+         width="30%"  />
+    &nbsp;&nbsp;&nbsp;
+    <img src="https://github.com/Antonio-Zago/AppNotificacoesCrimesCidade/blob/main/imagens-telas/Locais%20salvos.png" 
+         width="30%"  />
+  </div>
+</div>
