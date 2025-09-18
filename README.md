@@ -17,6 +17,12 @@ O usuário vai ter disponível um mapa, informando com marcadores as localizaç�
   </div>
 </div>
 
+## :page_with_curl: Padrão de commits
+
+* NC-X.Y - Descrição do commit
+
+* X e Y referem-se ao número da tarefa
+
 ## :art: Telas
 
 <div style="text-align: center">
