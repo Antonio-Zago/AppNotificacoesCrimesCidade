@@ -1,22 +1,25 @@
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/button_default.dart';
+import 'package:notifica_crimes_frontend/ui/core/ui/button_small_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/circular_progress_indicator_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/text_form_field_login_cadastro.dart';
-import 'package:notifica_crimes_frontend/ui/login/view_model/login_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/register/view_model/register_view_model.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key, required this.viewModel});
+class RegisterScreen extends StatefulWidget {
+  const RegisterScreen({super.key, required this.viewModel});
 
-  final LoginViewModel viewModel;
+  final RegisterViewModel viewModel;
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<RegisterScreen> createState() => _RegisterScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _RegisterScreenState extends State<RegisterScreen> {
   final TextEditingController controllerUsuario = TextEditingController();
+  final TextEditingController controllerEmail = TextEditingController();
   final TextEditingController controllerSenha = TextEditingController();
+  final TextEditingController controllerRepitaSenha = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
@@ -67,11 +70,30 @@ class _LoginScreenState extends State<LoginScreen> {
                                   enabled: !widget.viewModel.carregando,
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsGeometry.only(top: 50),
+                                  padding: EdgeInsetsGeometry.only(top: 25),
+                                  child: TextFormFieldLoginCadastro(
+                                    label: "Email",
+                                    prefixIcon: Icon(Icons.email),
+                                    controller: controllerEmail,
+                                    enabled: !widget.viewModel.carregando,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsGeometry.only(top: 25),
                                   child: TextFormFieldLoginCadastro(
                                     label: "Senha",
                                     prefixIcon: Icon(Icons.lock),
                                     controller: controllerSenha,
+                                    password: true,
+                                    enabled: !widget.viewModel.carregando,
+                                  ),
+                                ),
+                                Padding(
+                                  padding: EdgeInsetsGeometry.only(top: 25),
+                                  child: TextFormFieldLoginCadastro(
+                                    label: "Repita a senha",
+                                    prefixIcon: Icon(Icons.lock),
+                                    controller: controllerRepitaSenha,
                                     password: true,
                                     enabled: !widget.viewModel.carregando,
                                   ),
@@ -90,28 +112,36 @@ class _LoginScreenState extends State<LoginScreen> {
                                   ),
                                 ),
                                 Padding(
-                                  padding: EdgeInsetsGeometry.only(top: 100),
+                                  padding: EdgeInsetsGeometry.only(top: 50),
                                   child: widget.viewModel.carregando
                                       ? CircularProgressIndicatorDefault()
                                       : Column(
                                           children: [
-                                            ButtonDefault(
-                                              onPressed: widget
-                                                  .viewModel
-                                                  .onPressedButtonLogin,
-                                              label: "Entrar",
-                                              icon: Icons.login,
-                                            ),
                                             Padding(
                                               padding: EdgeInsetsGeometry.only(
                                                 top: 15,
                                               ),
                                               child: ButtonDefault(
-                                                onPressed: () =>widget
-                                                  .viewModel
-                                                  .onPressedButtonRegister(context),
+                                                onPressed: widget
+                                                    .viewModel
+                                                    .onPressedButtonRegister,
                                                 label: "Criar conta",
                                                 icon: Icons.person_add,
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsGeometry.only(
+                                                top: 25,
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: ButtonSmallDefault(
+                                                  icon: Icons.arrow_back,
+                                                  label: "Voltar ao login",
+                                                  onPressed: () => widget
+                                                    .viewModel
+                                                    .onPressedButtonReturn(context),
+                                                )
                                               ),
                                             ),
                                           ],

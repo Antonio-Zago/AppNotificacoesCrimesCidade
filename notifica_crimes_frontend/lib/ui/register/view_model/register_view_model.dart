@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 
-class LoginViewModel extends ChangeNotifier {
+class RegisterViewModel extends ChangeNotifier{
   bool carregando = false;
 
-  Future<void> onPressedButtonLogin() async {
+  Future<void> onPressedButtonRegister() async{
     try {
       carregando = true;
       notifyListeners(); // avisa logo que começou
 
-      // espera 5 segundos
-      // Aqui vai a lógica de login
+       // espera 5 segundos
+       // Aqui vai a lógica de cadastro
       await Future.delayed(const Duration(seconds: 5));
 
       carregando = false;
@@ -18,14 +18,14 @@ class LoginViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> onPressedButtonRegister(BuildContext context) async {
+  Future<void> onPressedButtonReturn(BuildContext context) async {
     try {
       carregando = true;
       notifyListeners(); // avisa logo que começou
 
       Navigator.pushNamed(
         context,
-        "/register"
+        "/"
       );
 
       carregando = false;

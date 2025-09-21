@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 
-class ButtonLoginCadastro extends StatefulWidget {
-  const ButtonLoginCadastro({
+class ButtonDefault extends StatefulWidget {
+  const ButtonDefault({
     super.key,
     required this.onPressed,
     required this.label, 
@@ -14,10 +14,10 @@ class ButtonLoginCadastro extends StatefulWidget {
   final IconData icon;
 
   @override
-  State<ButtonLoginCadastro> createState() => _ButtonLoginCadastroState();
+  State<ButtonDefault> createState() => _ButtonDefaultState();
 }
 
-class _ButtonLoginCadastroState extends State<ButtonLoginCadastro> {
+class _ButtonDefaultState extends State<ButtonDefault> {
   @override
   Widget build(BuildContext context) {
     return SizedBox(
