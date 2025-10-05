@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 class LoginViewModel extends ChangeNotifier {
   bool carregando = false;
 
-  Future<void> onPressedButtonLogin() async {
+  Future<void> onPressedButtonLogin(BuildContext context) async {
     try {
       carregando = true;
       notifyListeners(); // avisa logo que começou
@@ -11,6 +11,11 @@ class LoginViewModel extends ChangeNotifier {
       // espera 5 segundos
       // Aqui vai a lógica de login
       await Future.delayed(const Duration(seconds: 5));
+
+      await Navigator.pushNamed(
+        context,
+        "/home"
+      );
 
       carregando = false;
     } finally {

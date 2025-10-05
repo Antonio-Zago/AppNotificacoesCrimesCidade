@@ -37,7 +37,7 @@ class _LoginScreenState extends State<LoginScreen> {
                 padding: EdgeInsetsGeometry.only(top: 40),
                 child: Column(
                   children: [
-                    Image.asset("assets/images/logo.png", width: 150),
+                    Image.asset("assets/images/logo.png", width: 180),
                     Padding(
                       padding: EdgeInsetsGeometry.only(top: 50),
                       child: Container(
@@ -96,9 +96,9 @@ class _LoginScreenState extends State<LoginScreen> {
                                       : Column(
                                           children: [
                                             ButtonDefault(
-                                              onPressed: widget
+                                              onPressed: () async => await widget
                                                   .viewModel
-                                                  .onPressedButtonLogin,
+                                                  .onPressedButtonLogin(context),
                                               label: "Entrar",
                                               icon: Icons.login,
                                             ),

@@ -40,7 +40,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                 padding: EdgeInsetsGeometry.only(top: 40),
                 child: Column(
                   children: [
-                    Image.asset("assets/images/logo.png", width: 150),
+                    Image.asset("assets/images/logo.png", width: 180),
                     Padding(
                       padding: EdgeInsetsGeometry.only(top: 50),
                       child: Container(
