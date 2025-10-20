@@ -1,22 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
-import 'package:notifica_crimes_frontend/ui/core/ui/drawer_default.dart';
+import 'package:notifica_crimes_frontend/ui/choose_location_map/view_model/choose_location_map_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/core/ui/button_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/search_text_form_field.dart';
-import 'package:notifica_crimes_frontend/ui/home/view_model/home_view_model.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key, required this.viewModel});
+class ChooseLocationMapScreen extends StatefulWidget {
+  const ChooseLocationMapScreen({super.key, required this.viewModel});
 
-  final HomeViewModel viewModel;
+  final ChooseLocationMapViewModel viewModel;
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<ChooseLocationMapScreen> createState() =>
+      _ChooseLocationMapScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
-  final GlobalKey<ScaffoldState> _scaffoldKey = GlobalKey<ScaffoldState>();
-
+class _ChooseLocationMapScreenState extends State<ChooseLocationMapScreen> {
   @override
   void initState() {
     super.initState();
@@ -39,8 +38,21 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      key: _scaffoldKey,
-      drawer: DrawerDefault(),
+      appBar: AppBar(
+        backgroundColor: Color(ColorsConstants.azulPadraoApp),
+        iconTheme: IconThemeData(
+          color: Colors.white, // Cor da setinha
+        ),
+        title: Text(
+          "Escolha uma localização",
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 16,
+            fontWeight: FontWeight.bold,
+          ),
+        ),
+        centerTitle: true,
+      ),
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (BuildContext context, _) {
@@ -53,27 +65,13 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 onMapCreated: (controller) =>
                     widget.viewModel.controllerPlace.complete(controller),
-              ),
-              Positioned(
-                top: 40,
-                left: 0,
-                child: Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.rectangle,
-                    borderRadius: BorderRadius.only(
-                      bottomRight: Radius.circular(15),
-                      topRight: Radius.circular(15),
-                    ),
-                    color: Color(ColorsConstants.azulPadraoApp),
-                  ),
-
-                  child: IconButton(
-                    onPressed: () {
-                      _scaffoldKey.currentState!.openDrawer();
-                    },
-                    icon: Icon(Icons.menu, color: Colors.white, size: 35),
-                  ),
-                ),
+                onTap: (argument) {
+                  widget.viewModel.onTapMap(argument);
+                },
+                markers: <Marker>{
+                  if (widget.viewModel.markerLocalSelecionado != null)
+                    widget.viewModel.markerLocalSelecionado!,
+                },
               ),
               Positioned(
                 top: 40,
@@ -89,7 +87,25 @@ class _HomeScreenState extends State<HomeScreen> {
                     onChangedSearch: widget.viewModel.onChangedSearch,
                     onTapSearchText: widget.viewModel.onTapSearchText,
                     placesPrediction: widget.viewModel.placesPrediction,
-                    onTapSearchLocation: widget.viewModel.onTapSearchLocation
+                    onTapSearchLocation: widget.viewModel.onTapSearchLocation,
+                  ),
+                ),
+              ),
+              Positioned(
+                bottom: 40,
+                left: 0,
+                right: 0, 
+                child: Center(
+                  child: SizedBox(
+                    width: 300,
+                    child: ButtonDefault(
+                      onPressed: widget.viewModel.localSelecionado == null ? null : (){
+                        widget.viewModel.onPressedSaveButton(context);
+                      },
+                      label: "Salvar localização", 
+                      icon: Icons.save, 
+                      backgroundColor: Color(ColorsConstants.verdeBotaoSalvar)
+                    ),
                   ),
                 ),
               ),

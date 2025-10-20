@@ -1,7 +1,8 @@
 import 'package:dio/dio.dart';
-import 'package:notifica_crimes_frontend/data/services/api/model/place_detail_response/place_detail_api_model.dart';
-import 'package:notifica_crimes_frontend/data/services/api/model/prediction_place_request/place_prediction_request_api_model.dart';
-import 'package:notifica_crimes_frontend/data/services/api/model/prediction_place_response/place_prediction_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/place_detail_response/place_detail_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
 import 'package:result_dart/result_dart.dart';
 
 class ApiClient {
@@ -70,6 +71,26 @@ class ApiClient {
       var placeDetail = PlaceDetailApiModel.fromJson(response.data);
 
       return Success(placeDetail);
+    }on Exception catch(exception){
+      return Failure(Exception(exception));
+    } 
+  }
+
+  Future<Result<List<ArmasApiModel>>> findAllArmas() async {
+    try{
+      List<ArmasApiModel> retorno = [];
+
+      final listaResponse = await dio.get(
+        '',
+      );
+
+      for(var response in listaResponse.data){
+        var arma = ArmasApiModel.fromJson(response.data);
+
+        retorno.add(arma);
+      }
+
+      return Success(retorno);
     }on Exception catch(exception){
       return Failure(Exception(exception));
     } 

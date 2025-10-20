@@ -127,6 +127,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                     .onPressedButtonRegister,
                                                 label: "Criar conta",
                                                 icon: Icons.person_add,
+                                                backgroundColor: Color(ColorsConstants.azulPadraoApp),
                                               ),
                                             ),
                                             Padding(

@@ -72,7 +72,7 @@ class _DrawerDefaultState extends State<DrawerDefault> {
               ),
               
               onTap: () {
-                
+                Navigator.pushNamed(context, '/ocorrencia');
               },
             ),
             ListTile(

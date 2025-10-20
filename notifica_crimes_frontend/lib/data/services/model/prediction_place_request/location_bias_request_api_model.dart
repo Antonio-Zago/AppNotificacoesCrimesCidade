@@ -1,6 +1,6 @@
 
 import 'package:json_annotation/json_annotation.dart';
-import 'package:notifica_crimes_frontend/data/services/api/model/prediction_place_request/circle_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/circle_request_api_model.dart';
 
 part 'location_bias_request_api_model.g.dart';
 

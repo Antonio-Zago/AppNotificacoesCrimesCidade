@@ -6,12 +6,14 @@ class ButtonDefault extends StatefulWidget {
     super.key,
     required this.onPressed,
     required this.label, 
-    required this.icon,
+    required this.icon, 
+    required this.backgroundColor,
   });
 
-  final VoidCallback onPressed;
+  final VoidCallback? onPressed;
   final String label;
   final IconData icon;
+  final Color backgroundColor;
 
   @override
   State<ButtonDefault> createState() => _ButtonDefaultState();
@@ -26,7 +28,7 @@ class _ButtonDefaultState extends State<ButtonDefault> {
       child: ElevatedButton(
         onPressed: widget.onPressed,
         style: ElevatedButton.styleFrom(
-          backgroundColor: Color(ColorsConstants.azulPadraoApp),
+          backgroundColor: widget.backgroundColor,
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadiusGeometry.circular(10),
           ),
@@ -39,7 +41,8 @@ class _ButtonDefaultState extends State<ButtonDefault> {
               widget.label,
               style: TextStyle(
                 color: Colors.white, 
-                fontSize: 15
+                fontSize: 15,
+                fontWeight: FontWeight.bold
               ),
             ),
             Icon(

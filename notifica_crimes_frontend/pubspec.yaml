@@ -68,6 +68,7 @@ flutter:
     - assets/images/background_login.png
     - assets/images/logo.png
     - assets/images/perfil_exemplo.png
+    - assets/images/marcador.png
   fonts:
     - family: Open_sans
       fonts:

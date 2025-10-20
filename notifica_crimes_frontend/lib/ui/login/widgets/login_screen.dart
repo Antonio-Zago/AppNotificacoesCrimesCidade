@@ -101,6 +101,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   .onPressedButtonLogin(context),
                                               label: "Entrar",
                                               icon: Icons.login,
+                                              backgroundColor: Color(ColorsConstants.azulPadraoApp),
                                             ),
                                             Padding(
                                               padding: EdgeInsetsGeometry.only(
@@ -112,6 +113,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                                   .onPressedButtonRegister(context),
                                                 label: "Criar conta",
                                                 icon: Icons.person_add,
+                                                backgroundColor: Color(ColorsConstants.azulPadraoApp),
                                               ),
                                             ),
                                           ],
