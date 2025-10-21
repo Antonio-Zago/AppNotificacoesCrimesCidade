@@ -1,0 +1,39 @@
+{
+  "runtimeTarget": {
+    "name": ".NETCoreApp,Version=v8.0",
+    "signature": ""
+  },
+  "compilationOptions": {},
+  "targets": {
+    ".NETCoreApp,Version=v8.0": {
+      "AppNotificacoesCrimesCidade.Application/1.0.0": {
+        "dependencies": {
+          "AppNotificacoesCrimesCidade.Domain": "1.0.0"
+        },
+        "runtime": {
+          "AppNotificacoesCrimesCidade.Application.dll": {}
+        }
+      },
+      "AppNotificacoesCrimesCidade.Domain/1.0.0": {
+        "runtime": {
+          "AppNotificacoesCrimesCidade.Domain.dll": {
+            "assemblyVersion": "1.0.0.0",
+            "fileVersion": "1.0.0.0"
+          }
+        }
+      }
+    }
+  },
+  "libraries": {
+    "AppNotificacoesCrimesCidade.Application/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    },
+    "AppNotificacoesCrimesCidade.Domain/1.0.0": {
+      "type": "project",
+      "serviceable": false,
+      "sha512": ""
+    }
+  }
+}
