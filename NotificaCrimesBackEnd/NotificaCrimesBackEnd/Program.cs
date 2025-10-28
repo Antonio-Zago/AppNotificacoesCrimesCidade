@@ -1,5 +1,9 @@
-﻿using AppNotificacoesCrimesCidade.CrossCutting.Ioc;
+﻿using AppNotificacoesCrimesCidade.Application.Interfaces;
+using AppNotificacoesCrimesCidade.Application.Services;
+using AppNotificacoesCrimesCidade.CrossCutting.Ioc;
+using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using AppNotificacoesCrimesCidade.Infraestructure.Context;
+using AppNotificacoesCrimesCidade.Infraestructure.Repositories;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -11,6 +15,14 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfraestructure(builder.Configuration);
+
+//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
+builder.Services.AddScoped<IAgressaoRepository, AgressaoRepository>();
+builder.Services.AddScoped<IAgressaoService, AgressaoService>();
+builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
+builder.Services.AddScoped<IAssaltoRepository, AssaltoRepository>();
+builder.Services.AddScoped<IAssaltoService, AssaltoService>();
 
 var app = builder.Build();
 

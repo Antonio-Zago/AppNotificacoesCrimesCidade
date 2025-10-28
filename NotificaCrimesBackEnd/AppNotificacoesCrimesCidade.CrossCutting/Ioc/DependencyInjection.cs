@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Configuration;
 using Microsoft.EntityFrameworkCore;
+using NetTopologySuite;
 
 
 namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
@@ -17,7 +18,9 @@ namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
         {
             var postgresConnection = configuration.GetConnectionString("DefaultConnection");
 
-            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(postgresConnection));
+            services.AddDbContext<AppDbContext>(options => options.UseNpgsql(postgresConnection, o => {
+                o.UseNetTopologySuite();
+            }));
            
             return services;
         }

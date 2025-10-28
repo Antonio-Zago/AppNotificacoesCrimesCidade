@@ -22,3 +22,5 @@ D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCri
 D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCrimesCidade.Domain\obj\Debug\net8.0\refint\AppNotificacoesCrimesCidade.Domain.dll
 D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCrimesCidade.Domain\obj\Debug\net8.0\AppNotificacoesCrimesCidade.Domain.pdb
 D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCrimesCidade.Domain\obj\Debug\net8.0\ref\AppNotificacoesCrimesCidade.Domain.dll
+D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCrimesCidade.Domain\obj\Debug\net8.0\AppNotificacoesCrimesCidade.Domain.csproj.AssemblyReference.cache
+D:\Projetos\AppNotificacoesCrimesCidade\NotificaCrimesBackEnd\AppNotificacoesCrimesCidade.Domain\obj\Debug\net8.0\EFCoreNpgsqlNetTopologySuite.cs

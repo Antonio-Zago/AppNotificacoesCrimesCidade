@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("AppNotificacoesCrimesCidade.CrossCutting")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+c791fbbe0f2012bc38512d573f40a767d4d38e66")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f2864dd6580fed4b8eb94d53505d9028b602895c")]
 [assembly: System.Reflection.AssemblyProductAttribute("AppNotificacoesCrimesCidade.CrossCutting")]
 [assembly: System.Reflection.AssemblyTitleAttribute("AppNotificacoesCrimesCidade.CrossCutting")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
