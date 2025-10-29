@@ -40,6 +40,36 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Repositories
             }
         }
 
+        private IOcorrenciaRepository? _ocorrenciaRepository;
+
+        public IOcorrenciaRepository OcorrenciaRepository
+        {
+            get
+            {
+                return _ocorrenciaRepository = _ocorrenciaRepository ?? new OcorrenciaRepository(_context);
+            }
+        }
+
+        private ILocalizacaoOcorrenciaRepository? _localizacaoOcorrenciaRepository;
+
+        public ILocalizacaoOcorrenciaRepository LocalizacaoOcorrenciaRepository
+        {
+            get
+            {
+                return _localizacaoOcorrenciaRepository = _localizacaoOcorrenciaRepository ?? new LocalizacaoOcorrenciaRepository(_context);
+            }
+        }
+
+        private ITipoBemRepository? _tipoBemRepository;
+
+        public ITipoBemRepository TipoBemRepository
+        {
+            get
+            {
+                return _tipoBemRepository = _tipoBemRepository ?? new TipoBemRepository(_context);
+            }
+        }
+
         public async Task<int> CommitAsync()
         {
             return await _context.SaveChangesAsync();

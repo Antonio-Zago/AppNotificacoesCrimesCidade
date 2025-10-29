@@ -6,10 +6,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppNotificacoesCrimesCidade.Application.Mappers
+namespace AppNotificacoesCrimesCidade.Application.Interfaces
 {
-    public static class AgressaoMapper
+    public interface IOcorrenciaService : IServiceBase<Ocorrencia, OcorrenciaDto, OcorrenciaForm>
     {
-        
     }
 }

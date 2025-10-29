@@ -12,9 +12,11 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
     {
         public int QtdAgressores { get; set; }
         public bool PossuiArma { get; set; }
-        public int OcorrenciaId { get; set; }
+        public OcorrenciaForm Ocorrencia { get; set; }
 
         public bool Tentativa { get; set; }
         public int TipoArmaId { get; set; }
+
+        public List<int> TipoBensId { get; set; }
     }
 }

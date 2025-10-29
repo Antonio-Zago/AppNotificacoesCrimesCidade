@@ -30,5 +30,7 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
         public int TipoArmaId { get; set; }
 
         public TipoArma TipoArma { get; set; }
+
+        public List<AssaltoTipoBem> AssaltoTipoBens { get; set; }
     }
 }

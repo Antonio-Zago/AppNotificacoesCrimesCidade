@@ -16,12 +16,9 @@ builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfraestructure(builder.Configuration);
 
-//builder.Services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
-builder.Services.AddScoped<IAgressaoRepository, AgressaoRepository>();
 builder.Services.AddScoped<IAgressaoService, AgressaoService>();
 builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
-builder.Services.AddScoped<IAssaltoRepository, AssaltoRepository>();
 builder.Services.AddScoped<IAssaltoService, AssaltoService>();
 
 var app = builder.Build();

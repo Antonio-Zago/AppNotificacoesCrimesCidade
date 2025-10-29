@@ -6,29 +6,23 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace AppNotificacoesCrimesCidade.Domain.Entities
+namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
-    public class LocalizacaoOcorrencia
+    public class LocalizacaoOcorrenciaDto
     {
-        [Column("id")]
         public int Id { get; set; }
 
-        [Column("cep")]
-        public string? Cep { get; set; }
+        public string? cep { get; set; }
 
-        [Column("coordenadas")]
-        public Point Coordenadas { get; set; }
+        public double Latitude { get; set; }
+        public double Longitude { get; set; }
 
-        [Column("cidade")]
         public string? Cidade { get; set; }
 
-        [Column("bairro")]
         public string? Bairro { get; set; }
 
-        [Column("rua")]
         public string? Rua { get; set; }
 
-        [Column("numero")]
         public int Numero { get; set; }
     }
 }
