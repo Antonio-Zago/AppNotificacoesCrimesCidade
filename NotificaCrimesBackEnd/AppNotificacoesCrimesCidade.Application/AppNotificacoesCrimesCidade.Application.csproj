@@ -7,12 +7,11 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\AppNotificacoesCrimesCidade.Domain\AppNotificacoesCrimesCidade.Domain.csproj" />
+    <PackageReference Include="Hashids.net" Version="1.7.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <Folder Include="Exceptions\" />
-    <Folder Include="Helpers\" />
+    <ProjectReference Include="..\AppNotificacoesCrimesCidade.Domain\AppNotificacoesCrimesCidade.Domain.csproj" />
   </ItemGroup>
 
 </Project>

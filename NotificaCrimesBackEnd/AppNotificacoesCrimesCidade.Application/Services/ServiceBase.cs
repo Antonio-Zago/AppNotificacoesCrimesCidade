@@ -1,4 +1,6 @@
-﻿using AppNotificacoesCrimesCidade.Application.Interfaces;
+﻿using AppNotificacoesCrimesCidade.Application.Exceptions;
+using AppNotificacoesCrimesCidade.Application.Helpers;
+using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -16,78 +18,167 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
         private readonly IUnitOfWork _unitOfWork;
 
-        public ServiceBase(IServiceFactory serviceFactory, IUnitOfWork unitOfWork)
+
+        private readonly IMapperBase<TEntity, UDto, VForm> _mapper;
+
+        private readonly IHashidsPublicIdService _hashidsPublicIdService;
+
+        public ServiceBase(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<TEntity, UDto, VForm> mapper)
         {
             _serviceFactory = serviceFactory;
             _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _hashidsPublicIdService = hashidsPublicIdService;
         }
 
-        public virtual async Task<IReadOnlyList<UDto>> GetAllAsync()
+        public virtual async Task<Result<IReadOnlyList<UDto>>> GetAllAsync()
         {
-            var repositorio = _serviceFactory.Create<TEntity>();
+            try
+            {
+                var repositorio = _serviceFactory.Create<TEntity>();
 
-            var entidades = await repositorio.GetAllAsync();
+                var entidades = await repositorio.GetAllAsync();
 
-            var dtos = entidades.Select(e => MapperBase<TEntity, UDto>.ConvertToDto(e)).ToList();
+                var dtos = entidades.Select(e => _mapper.ConvertToDto(e)).ToList();
 
-            return dtos;
+
+                return Result<IReadOnlyList<UDto>>.Success(dtos);
+            }
+            catch (Exception ex)
+            {
+                return Result<IReadOnlyList<UDto>>.Failure(new ErrorDefault(ex.Message));
+            }
+
         }
 
-        public virtual async Task<UDto> AddAsync(VForm form)
+        public virtual async Task<Result<UDto>> AddAsync(VForm form)
         {
-            var repositorio = _serviceFactory.Create<TEntity>();
+            try
+            {
+                var repositorio = _serviceFactory.Create<TEntity>();
 
-            var entidade = MapperBase<TEntity, VForm>.ConvertToEntity(form);
+                var entidade = _mapper.ConvertToEntity(form);
+        
+                await _unitOfWork.BeginTransactionAsync();
 
-            var entidadeSalva = await repositorio.AddAsync(entidade);
+                var entidadeSalva = await repositorio.AddAsync(entidade);
 
-            await _unitOfWork.CommitAsync();
+                await _unitOfWork.CommitAsync();
 
-            var dto = MapperBase<TEntity, UDto>.ConvertToDto(entidadeSalva);
+                var dto = _mapper.ConvertToDto(entidadeSalva);
 
-            return dto;
+                await _unitOfWork.CommitTransactionAsync(); 
+
+                return Result<UDto>.Success( dto);
+            }
+            catch (Exception ex) 
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<UDto>.Failure(new ErrorDefault(ex.Message));
+            }
+
+            
         }
 
-        public virtual async Task DeleteAsync(int id)
+        public virtual async Task<Result>  DeleteAsync(string idPublic)
         {
-            var repositorio = _serviceFactory.Create<TEntity>();
+            
+            try
+            {
+                var repositorio = _serviceFactory.Create<TEntity>();
 
-            await repositorio.DeleteAsync(id);
+                await _unitOfWork.BeginTransactionAsync();
 
-            await _unitOfWork.CommitAsync();
+                var id = _hashidsPublicIdService.ToInternal(idPublic);
+
+                if (id == null)
+                {
+                    throw new Exception("Falha na covernsão do id público");
+                }
+                  
+                await repositorio.DeleteAsync(id.Value);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result.Success();
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result.Failure(new ErrorDefault(ex.Message));
+            }
+
+            
         }
 
-        public virtual async Task<UDto> GetByIdAsync(int id)
+        public virtual async Task<Result<UDto>> GetByIdAsync(string idPublic)
         {
-            var repositorio = _serviceFactory.Create<TEntity>();
+            try
+            {
+                var repositorio = _serviceFactory.Create<TEntity>();
 
-            var entity = await repositorio.GetByIdAsync(id);
-            if (entity == null)
-                throw new KeyNotFoundException($"Entidade {typeof(TEntity).Name} com ID {id} não encontrada.");
+                var id = _hashidsPublicIdService.ToInternal(idPublic);
 
-            var dto = MapperBase<TEntity, UDto>.ConvertToDto(entity);
+                if (id == null)
+                {
+                    throw new Exception("Falha na covernsão do id público");
+                }
 
-            return dto;
+                var entity = await repositorio.GetByIdAsync(id.Value);
+                if (entity == null)
+                    throw new KeyNotFoundException($"Entidade {typeof(TEntity).Name} com ID {id} não encontrada.");
+
+                var dto = _mapper.ConvertToDto(entity);
+
+                return Result<UDto>.Success(dto);
+            }
+            catch (Exception ex)
+            {
+                return Result<UDto>.Failure(new ErrorDefault(ex.Message));
+            }
+
         }
 
-        public virtual async Task<UDto> UpdateAsync(VForm form, int id)
+        public virtual async Task<Result<UDto>> UpdateAsync(VForm form, string idPublic)
         {
-            var repositorio = _serviceFactory.Create<TEntity>();
+            
+            try
+            {
+                var repositorio = _serviceFactory.Create<TEntity>();
 
-            var entity = await repositorio.GetByIdAsync(id);
+                var id = _hashidsPublicIdService.ToInternal(idPublic);
 
-            if (entity == null)
-                throw new KeyNotFoundException($"Entidade {typeof(TEntity).Name} com ID {id} não encontrada.");
+                if (id == null)
+                {
+                    throw new Exception("Falha na covernsão do id público");
+                }
 
-            MapperBase<TEntity, VForm>.SetValuesUpdate(form, entity);
+                var entity = await repositorio.GetByIdAsync(id.Value);
 
-            var entidadeSalva = await repositorio.UpdateAsync(entity);
+                if (entity == null)
+                    throw new KeyNotFoundException($"Entidade {typeof(TEntity).Name} com ID {id} não encontrada.");
 
-            await _unitOfWork.CommitAsync();
+                _mapper.SetValuesUpdate(form, entity);
 
-            var dto = MapperBase<TEntity, UDto>.ConvertToDto(entidadeSalva);
+                await _unitOfWork.BeginTransactionAsync();
 
-            return dto;
+                var entidadeSalva = await repositorio.UpdateAsync(entity);
+
+                await _unitOfWork.CommitAsync();
+
+                var dto = _mapper.ConvertToDto(entidadeSalva);
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<UDto>.Success(dto);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<UDto>.Failure(new ErrorDefault(ex.Message));
+            }         
         }
     }
 }

@@ -16,6 +16,14 @@ namespace AppNotificacoesCrimesCidade.Domain.Interfaces
         ILocalizacaoOcorrenciaRepository LocalizacaoOcorrenciaRepository { get; }
 
         ITipoBemRepository TipoBemRepository { get; }
+
+        ITipoArmaRepository TipoArmaRepository { get; }
         Task<int> CommitAsync();
+
+        Task BeginTransactionAsync();
+
+        Task CommitTransactionAsync();
+
+        Task RoolbackTransactionAsync();
     }
 }

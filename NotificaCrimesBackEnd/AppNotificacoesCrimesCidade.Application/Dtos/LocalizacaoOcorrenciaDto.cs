@@ -10,7 +10,7 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
     public class LocalizacaoOcorrenciaDto
     {
-        public int Id { get; set; }
+        public String? Id { get; set; }
 
         public string? cep { get; set; }
 

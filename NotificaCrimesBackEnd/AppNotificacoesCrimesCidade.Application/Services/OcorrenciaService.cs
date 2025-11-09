@@ -1,5 +1,6 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
+using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using System;
@@ -12,7 +13,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 {
     public class OcorrenciaService : ServiceBase<Ocorrencia, OcorrenciaDto, OcorrenciaForm>, IOcorrenciaService
     {
-        public OcorrenciaService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork) : base(serviceFactory, unitOfWork)
+        public OcorrenciaService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Ocorrencia, OcorrenciaDto, OcorrenciaForm> mapper) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {
         }
     }

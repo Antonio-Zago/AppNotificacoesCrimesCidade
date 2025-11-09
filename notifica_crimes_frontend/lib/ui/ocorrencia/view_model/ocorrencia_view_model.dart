@@ -1,8 +1,13 @@
+import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/localizacao_ocorrencia.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/ocorrencia.dart';
+import 'package:timezone/timezone.dart' as tz;
 
 class OcorrenciaViewModel extends ChangeNotifier {
   OcorrenciaViewModel({required this.ocorrenciaRepository});
@@ -10,9 +15,12 @@ class OcorrenciaViewModel extends ChangeNotifier {
   final OcorrenciaRepository ocorrenciaRepository;
 
   TextEditingController dateController = TextEditingController();
+  DateTime? dataSelecionada;
   TextEditingController descricaoController = TextEditingController();
   TextEditingController numeroAgressoresController = TextEditingController();
   TextEditingController localizacaoController = TextEditingController();
+  double? latitude;
+  double? longitude;
   DateTime? dataInicial;
   String? tipo;
   String? estavaArmado;
@@ -28,7 +36,6 @@ class OcorrenciaViewModel extends ChangeNotifier {
     try{
       carregandoTela = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 5));
       var armas = await ocorrenciaRepository.findAllArmas();
 
       tipoArmas = armas.getOrThrow();
@@ -43,18 +50,90 @@ class OcorrenciaViewModel extends ChangeNotifier {
     }
   }
 
-  Future<void> saveOcorrencia() async {
+  void clearError() {
+    error = null;
+  }
+
+  Future<bool> saveOcorrencia() async {
     
-    if (formKey.currentState!.validate()) {
+    carregandoTela = true;
+    notifyListeners();
+    try{
+      if (formKey.currentState!.validate()) {
+        
+        _validacoesCamposOcorrencia();
 
-    } else {
+        var localizacaoRequest = LocalizacaoOcorrencia(
+          cep: "", 
+          latitude: latitude!, 
+          longitude: longitude!, 
+          cidade: "", 
+          bairro: "", 
+          rua: "", 
+          numero: 0
+        );
+
+
+        //Pegar a data cadastrado no input
+        var ocorrenciaRequest = Ocorrencia(
+          descricao: descricaoController.text, 
+          dataHora: dataSelecionada!,
+          localizacao: localizacaoRequest
+        );
+
+
+        //Tratar caso os valores sejam nulos
+        var assaltoRequest = Assalto(
+          qtdAgressores: int.parse(numeroAgressoresController.text), 
+          possuiArma: estavaArmado == 'S', 
+          tentativa: false, 
+          tipoArmaId: tipoArma ?? "", 
+          tipoBensId: bensSelecionados.map((p) => p.id).toList(),
+          ocorrencia: ocorrenciaRequest
+        );
+
+        var retorno = await ocorrenciaRepository.postAssalto(assaltoRequest);
+
+        retorno.getOrThrow();
+
+        resetarControllers();
+
+        carregandoTela = false;
+        notifyListeners();
+
+        return true;
+
+      }    
+
+      carregandoTela = false;
+      notifyListeners();
+      return false;
       
+    }on Exception catch (exception) {
+      error = exception;
+      carregandoTela = false;
+      notifyListeners();
+      return false;
     }
+    
+        
+  }
 
+  void _validacoesCamposOcorrencia(){
 
+    final brasilia = tz.getLocation('America/Sao_Paulo');    
+    var dataHoraAtual = tz.TZDateTime.now(brasilia);
+
+    if(dataSelecionada!.isAfter(dataHoraAtual)){
+      throw Exception("Data selecionada é maior que a data atual");
+    }
   }
 
   Future<void> selectDate(BuildContext context) async {
+
+    final brasilia = tz.getLocation('America/Sao_Paulo');    
+    dataInicial ??= tz.TZDateTime.now(brasilia);
+
     dataInicial ??= DateTime.now();
 
     final DateTime? data = await showDatePicker(
@@ -74,6 +153,8 @@ class OcorrenciaViewModel extends ChangeNotifier {
     );
 
     if (hora == null) return;
+
+    dataSelecionada = DateTime(data.year,data.month,data.day,hora.hour,hora.minute);
 
     dateController.text =
         "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year} ${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}";
@@ -118,6 +199,8 @@ class OcorrenciaViewModel extends ChangeNotifier {
     tipoAgressao = null;
     localizacaoController.clear();
     bensSelecionados.clear();
+    latitude = null;
+    longitude = null;
   }
 
   Future<void> onTapButtonChoseLocation(BuildContext context) async {
@@ -130,6 +213,8 @@ class OcorrenciaViewModel extends ChangeNotifier {
       if (retornoLocalizacaoSelecionada != null) {
         localizacaoController.text =
             "Latitude: ${retornoLocalizacaoSelecionada.latitude} - Longitude: ${retornoLocalizacaoSelecionada.longitude} ";
+        latitude= retornoLocalizacaoSelecionada.latitude;
+        longitude = retornoLocalizacaoSelecionada.longitude;
         notifyListeners();
       }
     }

@@ -1,4 +1,5 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
+using AppNotificacoesCrimesCidade.Application.Helpers;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
@@ -19,37 +20,52 @@ namespace NotificaCrimesBackEnd.Controllers
         public async Task<ActionResult<IEnumerable<AssaltoDto>>> GetAllAsync()
         {
             var entidades = await _service.GetAllAsync();
-            return Ok(entidades);
+            return entidades.Map<ActionResult>(
+                onSuccess: entidades => Ok(entidades),
+                onFailure: entidades => BadRequest(entidades)
+               );
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<AssaltoDto>> GetByIdAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AssaltoDto>> GetByIdAsync(string id)
         {
             var entidade = await _service.GetByIdAsync(id);
-            return Ok(entidade);
+            return entidade.Map<ActionResult>(
+               onSuccess: entidade => Ok(entidade),
+               onFailure: entidade => BadRequest(entidade)
+              );
         }
 
         [HttpPost]
         public async Task<ActionResult<AssaltoDto>> Post(AssaltoForm form)
         {
             var dto = await _service.AddAsync(form);
-            return Ok(dto);
+            return dto.Map<ActionResult>(
+                onSuccess: dto => Ok(dto),
+                onFailure: dto => BadRequest(dto)
+               );
         }
 
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<AssaltoDto>> UpdateAsync(AssaltoForm form, int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AssaltoDto>> UpdateAsync(AssaltoForm form, string id)
         {
             var entidade = await _service.UpdateAsync(form, id);
-            return Ok(entidade);
+            return entidade.Map<ActionResult>(
+                onSuccess: entidade => Ok(entidade),
+                onFailure: entidade => BadRequest(entidade)
+               );
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult<AssaltoDto>> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<AssaltoDto>> Delete(string id)
         {
-            await _service.DeleteAsync(id);
+            var result = await _service.DeleteAsync(id);
 
-            return Ok();
+            return result.Map<ActionResult>(
+                onSuccess: () => Ok(),
+                onFailure: error => BadRequest(error)
+            );
         }
     }
 }

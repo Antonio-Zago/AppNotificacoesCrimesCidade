@@ -1,6 +1,7 @@
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/local/local_data_service.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -52,6 +53,12 @@ class OcorrenciaRepositoryLocal implements OcorrenciaRepository{
     }on Exception catch (exception) {
       return Failure(Exception(exception));
     } 
+  }
+
+  @override
+  Future<Result<void>> postAssalto(Assalto assalto) {
+    // TODO: implement postAssalto
+    throw UnimplementedError();
   }
 
 }

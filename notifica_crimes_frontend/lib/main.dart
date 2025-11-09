@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
@@ -20,12 +22,17 @@ import 'package:notifica_crimes_frontend/ui/ocorrencia/widgets/ocorrencia_screen
 import 'package:notifica_crimes_frontend/ui/register/view_model/register_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/register/widgets/register_screen.dart';
 import 'package:provider/provider.dart';
+import 'package:timezone/data/latest.dart' as tz;
 import 'package:uuid/uuid.dart';
 
 void main() {
+  HttpOverrides.global = MyHttpOverrides();
+  WidgetsFlutterBinding.ensureInitialized();
+  tz.initializeTimeZones();
+
   runApp(
     MultiProvider(
-      providers: providersLocal,
+      providers: providersRemote,
       child: const MyApp(),
     ),
   );
@@ -50,5 +57,13 @@ class MyApp extends StatelessWidget {
         '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>()))
       },
     );
+  }
+}
+
+class MyHttpOverrides extends HttpOverrides{
+  @override
+  HttpClient createHttpClient(SecurityContext? context){
+    return super.createHttpClient(context)
+      ..badCertificateCallback = (X509Certificate cert, String host, int port)=> true;
   }
 }

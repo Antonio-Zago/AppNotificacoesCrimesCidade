@@ -22,7 +22,20 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
   @override
   void initState() {
     super.initState();
-
+    widget.viewModel.addListener(() {
+      final error = widget.viewModel.error;
+      if (error != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+          widget.viewModel.clearError(); // limpa depois que mostrar
+        });
+      }
+    });
     Future.microtask(() {
       widget.viewModel.initState();
     });
@@ -303,7 +316,31 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                                 padding: EdgeInsetsGeometry.only(top: 40),
                                 child: ButtonDefault(
                                   onPressed: () async {
-                                    await widget.viewModel.saveOcorrencia();
+                                    var foiSalvo = await widget.viewModel
+                                        .saveOcorrencia();
+
+                                    // Verifica se o widget ainda está montado (evita erro se a tela for fechada antes)
+                                    if (!context.mounted) return;
+
+                                    if (foiSalvo) {
+                                      // Mostra mensagem de sucesso
+                                      showDialog(
+                                        context: context,
+                                        builder: (context) => AlertDialog(
+                                          title: const Text('Sucesso'),
+                                          content: const Text(
+                                            'Ocorrência salva com sucesso!',
+                                          ),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () =>
+                                                  Navigator.pop(context),
+                                              child: const Text('OK'),
+                                            ),
+                                          ],
+                                        ),
+                                      );
+                                    }
                                   },
                                   label: "Salvar",
                                   icon: Icons.save,

@@ -10,13 +10,13 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
     public class OcorrenciaDto
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public string Descricao { get; set; }
 
         public DateTime DataHora { get; set; }
 
-        public int LocalizacaoId { get; set; }
+        public string? LocalizacaoId { get; set; }
 
     }
 }

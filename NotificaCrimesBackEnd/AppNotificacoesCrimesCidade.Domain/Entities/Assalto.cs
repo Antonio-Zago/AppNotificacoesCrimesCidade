@@ -27,7 +27,7 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
         public bool Tentativa { get; set; }
 
         [Column("id_tipo_arma")]
-        public int TipoArmaId { get; set; }
+        public int? TipoArmaId { get; set; }
 
         public TipoArma TipoArma { get; set; }
 

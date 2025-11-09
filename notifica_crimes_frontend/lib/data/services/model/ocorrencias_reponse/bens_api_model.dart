@@ -7,7 +7,7 @@ class BensApiModel {
 
   BensApiModel(  {required this.id, required this.nome,});
 
-  final int id;
+  final String id;
   final String nome;
   
   Map<String, dynamic> toJson() => _$BensApiModelToJson(this);

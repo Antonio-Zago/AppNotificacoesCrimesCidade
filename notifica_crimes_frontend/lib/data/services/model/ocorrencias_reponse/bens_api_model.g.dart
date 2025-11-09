@@ -7,7 +7,7 @@ part of 'bens_api_model.dart';
 // **************************************************************************
 
 BensApiModel _$BensApiModelFromJson(Map<String, dynamic> json) =>
-    BensApiModel(id: (json['id'] as num).toInt(), nome: json['nome'] as String);
+    BensApiModel(id: json['id'] as String, nome: json['nome'] as String);
 
 Map<String, dynamic> _$BensApiModelToJson(BensApiModel instance) =>
     <String, dynamic>{'id': instance.id, 'nome': instance.nome};

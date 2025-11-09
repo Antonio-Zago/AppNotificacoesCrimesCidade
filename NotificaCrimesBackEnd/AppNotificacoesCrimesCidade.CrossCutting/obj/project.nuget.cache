@@ -1,9 +1,10 @@
 {
   "version": 2,
-  "dgSpecHash": "ZTT5TQRYSIA=",
+  "dgSpecHash": "9EqO/iV0BBw=",
   "success": true,
   "projectFilePath": "D:\\Projetos\\AppNotificacoesCrimesCidade\\NotificaCrimesBackEnd\\AppNotificacoesCrimesCidade.CrossCutting\\AppNotificacoesCrimesCidade.CrossCutting.csproj",
   "expectedPackageFiles": [
+    "C:\\Users\\Antonio\\.nuget\\packages\\hashids.net\\1.7.0\\hashids.net.1.7.0.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.entityframeworkcore\\9.0.10\\microsoft.entityframeworkcore.9.0.10.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.entityframeworkcore.abstractions\\9.0.10\\microsoft.entityframeworkcore.abstractions.9.0.10.nupkg.sha512",
     "C:\\Users\\Antonio\\.nuget\\packages\\microsoft.entityframeworkcore.analyzers\\9.0.10\\microsoft.entityframeworkcore.analyzers.9.0.10.nupkg.sha512",

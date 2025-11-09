@@ -10,7 +10,7 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
     public class AgressaoDto 
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public int QtdAgressores { get; set; }
 
@@ -18,6 +18,6 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public bool Fisica { get; set; }
 
-        public int OcorrenciaId { get; set; }
+        public string? OcorrenciaId { get; set; }
     }
 }

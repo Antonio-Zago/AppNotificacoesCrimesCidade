@@ -15,8 +15,8 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
         public OcorrenciaForm Ocorrencia { get; set; }
 
         public bool Tentativa { get; set; }
-        public int TipoArmaId { get; set; }
+        public string? TipoArmaId { get; set; }
 
-        public List<int> TipoBensId { get; set; }
+        public List<string>? TipoBensId { get; set; }
     }
 }

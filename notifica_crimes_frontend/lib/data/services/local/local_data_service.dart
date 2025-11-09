@@ -9,11 +9,11 @@ class LocalDataService {
       List<ArmasApiModel> retorno = [];
 
 
-      var arma1 = ArmasApiModel(id: 1, nome: 'Faca');
+      var arma1 = ArmasApiModel(id: "1", nome: 'Faca');
       retorno.add(arma1);
-      var arma2 = ArmasApiModel(id: 2, nome: 'Arma');
+      var arma2 = ArmasApiModel(id: "2", nome: 'Arma');
       retorno.add(arma2);
-      var arma3 = ArmasApiModel(id: 3, nome: 'Martelo');
+      var arma3 = ArmasApiModel(id: "3", nome: 'Martelo');
       retorno.add(arma3);
 
       return Success(retorno);
@@ -26,13 +26,13 @@ class LocalDataService {
     try{
       List<BensApiModel> retorno = [];
 
-      var bem = BensApiModel(id: 1, nome: 'Eletrônicos');
+      var bem = BensApiModel(id: "1", nome: 'Eletrônicos');
       retorno.add(bem);
 
-      var bem2 = BensApiModel(id: 2, nome: 'Automóvel');
+      var bem2 = BensApiModel(id: "2", nome: 'Automóvel');
       retorno.add(bem2);
 
-      var bem3 = BensApiModel(id: 3, nome: 'Joias');
+      var bem3 = BensApiModel(id: "3", nome: 'Joias');
       retorno.add(bem3);
 
 

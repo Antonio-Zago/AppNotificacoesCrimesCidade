@@ -16,7 +16,6 @@ class ChooseBensViewModel extends ChangeNotifier {
     try {
       carregandoTela = true;
       notifyListeners();
-      await Future.delayed(const Duration(seconds: 5));
       var bensApi = await ocorrenciaRepository.findAllBens();
 
       bens = bensApi.getOrThrow();

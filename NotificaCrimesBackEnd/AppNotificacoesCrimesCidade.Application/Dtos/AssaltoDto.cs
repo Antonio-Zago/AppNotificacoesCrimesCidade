@@ -10,17 +10,19 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
     public class AssaltoDto
     {
-        public int Id { get; set; }
+        public string? Id { get; set; }
 
         public int QtdAgressores { get; set; }
 
         public bool PossuiArma { get; set; }
 
-        public int OcorrenciaId { get; set; }
+        public string OcorrenciaId { get; set; }
 
         public bool Tentativa { get; set; }
 
-        public int TipoArmaId { get; set; }
+        public string? TipoArmaId { get; set; }
+
+        public DateTime DataHora { get; set; }
 
     }
 }

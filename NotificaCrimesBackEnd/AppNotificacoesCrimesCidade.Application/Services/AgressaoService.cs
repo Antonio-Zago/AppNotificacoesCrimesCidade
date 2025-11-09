@@ -1,5 +1,6 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
+using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using System;
@@ -12,16 +13,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 {
     public class AgressaoService : ServiceBase<Agressao, AgressaoDto, AgressaoForm>, IAgressaoService
     {
-        private readonly IUnitOfWork _unitOfWork;
-        public AgressaoService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork) : base(serviceFactory, unitOfWork)
+        public AgressaoService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Agressao, AgressaoDto, AgressaoForm> mapper) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {
-            _unitOfWork = unitOfWork;
-        }
-
-        //Aqui eu consigo sobscrever os métodos do base caso tenha uma regra diferente a ser utilizada
-        public override Task<IReadOnlyList<AgressaoDto>> GetAllAsync()
-        {
-            return base.GetAllAsync();
         }
     }
 }

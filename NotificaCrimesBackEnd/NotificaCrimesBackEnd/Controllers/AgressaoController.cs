@@ -21,37 +21,53 @@ namespace NotificaCrimesBackEnd.Controllers
         public async Task<ActionResult<IEnumerable<AgressaoDto>>> GetAllAsync() 
         { 
             var entidades = await _service.GetAllAsync();
-            return Ok(entidades);
+            return entidades.Map<ActionResult>( 
+                onSuccess : entidades => Ok(entidades),
+                onFailure : entidades => BadRequest(entidades)
+               );
         }
 
-        [HttpGet("{id:int}")]
-        public async Task<ActionResult<AgressaoDto>> GetByIdAsync(int id)
+        [HttpGet("{id}")]
+        public async Task<ActionResult<AgressaoDto>> GetByIdAsync(string id)
         {
             var entidade = await _service.GetByIdAsync(id);
-            return Ok(entidade);
+            return entidade.Map<ActionResult>(
+                onSuccess: entidade => Ok(entidade),
+                onFailure: entidade => BadRequest(entidade)
+               );
         }
 
         [HttpPost]
         public async Task<ActionResult<AgressaoDto>> Post(AgressaoForm form)
         {
             var dto = await _service.AddAsync(form);
-            return Ok(dto);
+            return dto.Map<ActionResult>(
+                onSuccess: dto => Ok(dto),
+                onFailure: dto => BadRequest(dto)
+               );
         }
 
 
-        [HttpPut("{id:int}")]
-        public async Task<ActionResult<AgressaoDto>> UpdateAsync(AgressaoForm form, int id)
+        [HttpPut("{id}")]
+        public async Task<ActionResult<AgressaoDto>> UpdateAsync(AgressaoForm form, string id)
         {
             var entidade = await _service.UpdateAsync(form, id);
-            return Ok(entidade);
+            return entidade.Map<ActionResult>(
+                onSuccess: entidade => Ok(entidade),
+                onFailure: entidade => BadRequest(entidade)
+               );
         }
 
-        [HttpDelete("{id:int}")]
-        public async Task<ActionResult<AgressaoDto>> Delete(int id)
+        [HttpDelete("{id}")]
+        public async Task<ActionResult<AgressaoDto>> Delete(string id)
         {
-            await _service.DeleteAsync(id);
+            var result = await _service.DeleteAsync(id);
 
-            return Ok();
+            return result.Map<ActionResult>(
+                onSuccess: () => Ok(),
+                onFailure: error => BadRequest(error)
+            );
+
         }
     }
 }

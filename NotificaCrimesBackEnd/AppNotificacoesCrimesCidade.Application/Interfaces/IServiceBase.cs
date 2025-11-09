@@ -1,4 +1,5 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
+using AppNotificacoesCrimesCidade.Application.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,14 +10,14 @@ namespace AppNotificacoesCrimesCidade.Application.Interfaces
 {
     public interface IServiceBase<TEntity, UDto, VForm> where TEntity : class, new() where UDto : class, new() where VForm : class, new()
     {
-        Task<IReadOnlyList<UDto>> GetAllAsync();
+        Task<Result<IReadOnlyList<UDto>>> GetAllAsync();
 
-        Task<UDto> AddAsync(VForm form);
+        Task<Result<UDto>> AddAsync(VForm form);
 
-        Task DeleteAsync(int id);
+        Task<Result> DeleteAsync(string id);
 
-        Task<UDto> GetByIdAsync(int id);
+        Task<Result<UDto>> GetByIdAsync(string id);
 
-        Task<UDto> UpdateAsync(VForm form, int id);
+        Task<Result<UDto>> UpdateAsync(VForm form, string id);
     }
 }

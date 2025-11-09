@@ -1,7 +1,11 @@
 
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
+import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/localizacao_ocorrencia_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/ocorrencia_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:result_dart/src/types.dart';
@@ -35,9 +39,66 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository{
   }
   
   @override
-  Future<Result<List<Bens>>> findAllBens() {
-    // TODO: implement findAllBens
-    throw UnimplementedError();
+  Future<Result<List<Bens>>> findAllBens() async{
+    
+    try{
+      List<Bens> listaRetorno = [];
+
+      var response = await apiClient.findAllBens();
+
+      var bensApi = response.getOrThrow();
+
+
+      for(var bemApi in bensApi){
+        Bens bem = Bens(id: bemApi.id, nome: bemApi.nome);
+
+        listaRetorno.add(bem);
+      }
+      return Success(listaRetorno);
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    } 
+  }
+
+  @override
+  Future<Result<void>> postAssalto(Assalto assalto) async{
+    
+    try{
+
+      //Aqui vou retirar cep, cidade, etc
+      var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
+        assalto.ocorrencia.localizacao.cep, 
+        assalto.ocorrencia.localizacao.cidade, 
+        assalto.ocorrencia.localizacao.bairro, 
+        assalto.ocorrencia.localizacao.rua, 
+        assalto.ocorrencia.localizacao.numero, 
+        latitude: assalto.ocorrencia.localizacao.latitude, 
+        longitude: assalto.ocorrencia.localizacao.longitude
+      );
+
+      var ocorrenciaRequest = OcorrenciaRequestApiModel(
+        descricao: assalto.ocorrencia.descricao, 
+        dataHora: assalto.ocorrencia.dataHora, 
+        localizacao: localizacaoRequest
+      );
+
+      var request = AssaltoRequestApiModel(
+        qtdAgressores: assalto.qtdAgressores, 
+        possuiArma: assalto.possuiArma, 
+        tentativa: assalto.tentativa, 
+        tipoArmaId: assalto.tipoArmaId, 
+        tipoBensId: assalto.tipoBensId, 
+        ocorrencia: ocorrenciaRequest
+      );
+
+      var retorno = await apiClient.postAssalto(request);
+
+      retorno.getOrThrow();
+
+      return Success(Null);
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    } 
   }
 
 }
