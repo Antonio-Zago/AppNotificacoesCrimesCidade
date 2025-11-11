@@ -1,10 +1,12 @@
 
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
+import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/localizacao_ocorrencia_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/ocorrencia_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/agressao.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
@@ -131,6 +133,44 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository{
       );
 
       var retorno = await apiClient.postRoubo(request);
+
+      retorno.getOrThrow();
+
+      return Success(Null);
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    } 
+  }
+
+  @override
+  Future<Result<void>> postAgressao(Agressao agressao) async{
+    
+    try{
+      //Aqui vou retirar cep, cidade, etc
+      var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
+        agressao.ocorrencia.localizacao.cep, 
+        agressao.ocorrencia.localizacao.cidade, 
+        agressao.ocorrencia.localizacao.bairro, 
+        agressao.ocorrencia.localizacao.rua, 
+        agressao.ocorrencia.localizacao.numero, 
+        latitude: agressao.ocorrencia.localizacao.latitude, 
+        longitude: agressao.ocorrencia.localizacao.longitude
+      );
+
+      var ocorrenciaRequest = OcorrenciaRequestApiModel(
+        descricao: agressao.ocorrencia.descricao, 
+        dataHora: agressao.ocorrencia.dataHora, 
+        localizacao: localizacaoRequest
+      );
+
+      var request = AgressaoRequestApiModel(
+        qtdAgressores: agressao.qtdAgressores, 
+        fisica: agressao.fisica, 
+        verbal: agressao.verbal, 
+        ocorrencia: ocorrenciaRequest
+      );
+
+      var retorno = await apiClient.postAgressao(request);
 
       retorno.getOrThrow();
 

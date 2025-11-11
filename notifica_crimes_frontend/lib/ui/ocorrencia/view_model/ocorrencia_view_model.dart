@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/agressao.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
@@ -99,6 +100,17 @@ class OcorrenciaViewModel extends ChangeNotifier {
           );
 
           var retorno = await ocorrenciaRepository.postRoubo(rouboRequest);
+
+          retorno.getOrThrow();
+        }else if (tipo == "A") {
+          var agressaoRequest = Agressao(
+            qtdAgressores: int.parse(numeroAgressoresController.text),
+            fisica: tipoAgressao == "F" || tipoAgressao == "A",
+            verbal: tipoAgressao == "V" || tipoAgressao == "A",
+            ocorrencia: ocorrenciaRequest,
+          );
+
+          var retorno = await ocorrenciaRepository.postAgressao(agressaoRequest);
 
           retorno.getOrThrow();
         }

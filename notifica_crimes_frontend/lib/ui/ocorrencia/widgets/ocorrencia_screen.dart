@@ -141,8 +141,7 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                               ),
 
                             if (widget.viewModel.tipo != null &&
-                                (widget.viewModel.tipo == "R" ||
-                                    widget.viewModel.tipo == "A"))
+                                (widget.viewModel.tipo == "R" ))
                               DropdownButtonDefault(
                                 onChanged: widget
                                     .viewModel
@@ -288,7 +287,6 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                               ),
                             if (widget.viewModel.tipo != null &&
                                 (widget.viewModel.tipo == "R" ||
-                                    widget.viewModel.tipo == "A" ||
                                     widget.viewModel.tipo == "F"))
                               Padding(
                                 padding: EdgeInsetsGeometry.only(top: 40),

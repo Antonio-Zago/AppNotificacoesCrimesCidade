@@ -14,6 +14,7 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public bool Fisica { get; set; }
 
-        public string? OcorrenciaId { get; set; }
+        public OcorrenciaForm Ocorrencia { get; set; }
+
     }
 }

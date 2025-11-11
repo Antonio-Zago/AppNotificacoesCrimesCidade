@@ -1,5 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
+import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/bens_api_model.dart';
@@ -72,6 +73,21 @@ class ApiClient {
     try {
       var retorno = await dio.post(
         '${ApiRoutes.urlBase}/Roubo',
+        data: request.toJson(),
+      );
+
+      return Success(Null);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<void>> postAgressao(AgressaoRequestApiModel request) async {
+    try {
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/Agressao',
         data: request.toJson(),
       );
 

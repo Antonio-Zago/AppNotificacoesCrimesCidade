@@ -1,5 +1,6 @@
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/local/local_data_service.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/agressao.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
@@ -65,6 +66,12 @@ class OcorrenciaRepositoryLocal implements OcorrenciaRepository{
   @override
   Future<Result<void>> postRoubo(Roubo roubo) {
     // TODO: implement postRoubo
+    throw UnimplementedError();
+  }
+
+  @override
+  Future<Result<void>> postAgressao(Agressao agressao) {
+    // TODO: implement postAgressao
     throw UnimplementedError();
   }
 
