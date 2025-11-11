@@ -24,9 +24,14 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Context
             modelBuilder.Entity<TipoBem>().ToTable("tipo_bens");
             modelBuilder.Entity<AssaltoTipoBem>().ToTable("assaltos_tipo_bens");
             modelBuilder.Entity<TipoArma>().ToTable("tipo_armas");
+            modelBuilder.Entity<Roubo>().ToTable("roubos");
+            modelBuilder.Entity<RouboTipoBem>().ToTable("roubos_tipo_bens");
 
             modelBuilder.Entity<AssaltoTipoBem>()
                 .HasKey(ea => new { ea.TipoBemId, ea.AssaltoId });  // Chave primária composta
+
+            modelBuilder.Entity<RouboTipoBem>()
+                .HasKey(ea => new { ea.TipoBemId, ea.RouboId });  // Chave primária composta
         }
 
         public DbSet<Agressao> Agressoes { get; set; }
@@ -42,6 +47,10 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Context
         public DbSet<AssaltoTipoBem> AssaltoTipoBens { get; set; }
 
         public DbSet<TipoArma> TipoArmas { get; set; }
+
+        public DbSet<Roubo> Roubos { get; set; }
+
+        public DbSet<RouboTipoBem> RouboTipoBens { get; set; }
 
     }
 }

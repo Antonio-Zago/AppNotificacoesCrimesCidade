@@ -82,6 +82,16 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Repositories
             }
         }
 
+        private IRouboRepository? _rouboRepository;
+
+        public IRouboRepository RouboRepository
+        {
+            get
+            {
+                return _rouboRepository = _rouboRepository ?? new RouboRepository(_context);
+            }
+        }
+
         public async Task<int> CommitAsync()
         {
             return await _context.SaveChangesAsync();

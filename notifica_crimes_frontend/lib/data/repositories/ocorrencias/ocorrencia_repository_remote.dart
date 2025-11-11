@@ -4,9 +4,11 @@ import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/localizacao_ocorrencia_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_request.dart/ocorrencia_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/roubo.dart';
 import 'package:result_dart/result_dart.dart';
 import 'package:result_dart/src/types.dart';
 
@@ -92,6 +94,43 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository{
       );
 
       var retorno = await apiClient.postAssalto(request);
+
+      retorno.getOrThrow();
+
+      return Success(Null);
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    } 
+  }
+
+  @override
+  Future<Result<void>> postRoubo(Roubo roubo) async{ 
+    try{
+
+      //Aqui vou retirar cep, cidade, etc
+      var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
+        roubo.ocorrencia.localizacao.cep, 
+        roubo.ocorrencia.localizacao.cidade, 
+        roubo.ocorrencia.localizacao.bairro, 
+        roubo.ocorrencia.localizacao.rua, 
+        roubo.ocorrencia.localizacao.numero, 
+        latitude: roubo.ocorrencia.localizacao.latitude, 
+        longitude: roubo.ocorrencia.localizacao.longitude
+      );
+
+      var ocorrenciaRequest = OcorrenciaRequestApiModel(
+        descricao: roubo.ocorrencia.descricao, 
+        dataHora: roubo.ocorrencia.dataHora, 
+        localizacao: localizacaoRequest
+      );
+
+      var request = RouboRequestApiModel(
+        tentativa: roubo.tentativa, 
+        tipoBensId: roubo.tipoBensId, 
+        ocorrencia: ocorrenciaRequest
+      );
+
+      var retorno = await apiClient.postRoubo(request);
 
       retorno.getOrThrow();
 

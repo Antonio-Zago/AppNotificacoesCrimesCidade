@@ -24,6 +24,7 @@ builder.Services.AddScoped<IAssaltoService, AssaltoService>();
 builder.Services.AddScoped<ITipoArmaService, TipoArmaService>();
 builder.Services.AddScoped<ITipoBemService, TipoBemService>();
 builder.Services.AddScoped<IHashidsPublicIdService, HashidsPublicIdService>();
+builder.Services.AddScoped<IRouboService, RouboService>();
 builder.Services.AddScoped(typeof(IMapperBase<,,>), typeof(MapperBase<,,>));
 
 var app = builder.Build();

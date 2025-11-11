@@ -19,5 +19,7 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
 
         [Column("tentativa")]
         public bool Tentativa { get; set; }
+
+        public List<RouboTipoBem> RouboTipoBens { get; set; }
     }
 }

@@ -6,6 +6,7 @@ import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse
 import 'package:notifica_crimes_frontend/data/services/model/place_detail_response/place_detail_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
 import 'package:result_dart/result_dart.dart';
 
 class ApiClient {
@@ -56,6 +57,21 @@ class ApiClient {
     try {
       var retorno = await dio.post(
         '${ApiRoutes.urlBase}/Assalto',
+        data: request.toJson(),
+      );
+
+      return Success(Null);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<void>> postRoubo(RouboRequestApiModel request) async {
+    try {
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/Roubo',
         data: request.toJson(),
       );
 

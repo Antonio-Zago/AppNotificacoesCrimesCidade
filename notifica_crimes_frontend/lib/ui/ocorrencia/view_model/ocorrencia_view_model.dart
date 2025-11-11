@@ -7,6 +7,7 @@ import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart'
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/bens.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/localizacao_ocorrencia.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/ocorrencia.dart';
+import 'package:notifica_crimes_frontend/domain/models/ocorrencias/roubo.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class OcorrenciaViewModel extends ChangeNotifier {
@@ -27,13 +28,13 @@ class OcorrenciaViewModel extends ChangeNotifier {
   String? tipoArma;
   String? tipoAgressao;
   bool carregandoTela = false;
-  List<Armas> tipoArmas= [];
+  List<Armas> tipoArmas = [];
   Exception? error;
   List<Bens> bensSelecionados = [];
   final formKey = GlobalKey<FormState>();
 
   Future<void> initState() async {
-    try{
+    try {
       carregandoTela = true;
       notifyListeners();
       var armas = await ocorrenciaRepository.findAllArmas();
@@ -42,10 +43,10 @@ class OcorrenciaViewModel extends ChangeNotifier {
 
       carregandoTela = false;
       notifyListeners();
-    }on Exception catch (exception) {
+    } on Exception catch (exception) {
       error = exception;
       carregandoTela = false;
-    }finally {
+    } finally {
       notifyListeners();
     }
   }
@@ -55,46 +56,52 @@ class OcorrenciaViewModel extends ChangeNotifier {
   }
 
   Future<bool> saveOcorrencia() async {
-    
     carregandoTela = true;
     notifyListeners();
-    try{
+    try {
       if (formKey.currentState!.validate()) {
-        
         _validacoesCamposOcorrencia();
 
         var localizacaoRequest = LocalizacaoOcorrencia(
-          cep: "", 
-          latitude: latitude!, 
-          longitude: longitude!, 
-          cidade: "", 
-          bairro: "", 
-          rua: "", 
-          numero: 0
+          cep: "",
+          latitude: latitude!,
+          longitude: longitude!,
+          cidade: "",
+          bairro: "",
+          rua: "",
+          numero: 0,
         );
 
-
-        //Pegar a data cadastrado no input
         var ocorrenciaRequest = Ocorrencia(
-          descricao: descricaoController.text, 
+          descricao: descricaoController.text,
           dataHora: dataSelecionada!,
-          localizacao: localizacaoRequest
+          localizacao: localizacaoRequest,
         );
 
+        if (tipo == "R") {
+          var assaltoRequest = Assalto(
+            qtdAgressores: int.parse(numeroAgressoresController.text),
+            possuiArma: estavaArmado == 'S',
+            tentativa: false,
+            tipoArmaId: tipoArma ?? "",
+            tipoBensId: bensSelecionados.map((p) => p.id).toList(),
+            ocorrencia: ocorrenciaRequest,
+          );
 
-        //Tratar caso os valores sejam nulos
-        var assaltoRequest = Assalto(
-          qtdAgressores: int.parse(numeroAgressoresController.text), 
-          possuiArma: estavaArmado == 'S', 
-          tentativa: false, 
-          tipoArmaId: tipoArma ?? "", 
-          tipoBensId: bensSelecionados.map((p) => p.id).toList(),
-          ocorrencia: ocorrenciaRequest
-        );
+          var retorno = await ocorrenciaRepository.postAssalto(assaltoRequest);
 
-        var retorno = await ocorrenciaRepository.postAssalto(assaltoRequest);
+          retorno.getOrThrow();
+        } else if (tipo == "F") {
+          var rouboRequest = Roubo(
+            tentativa: false,
+            tipoBensId: bensSelecionados.map((p) => p.id).toList(),
+            ocorrencia: ocorrenciaRequest,
+          );
 
-        retorno.getOrThrow();
+          var retorno = await ocorrenciaRepository.postRoubo(rouboRequest);
+
+          retorno.getOrThrow();
+        }
 
         resetarControllers();
 
@@ -102,36 +109,30 @@ class OcorrenciaViewModel extends ChangeNotifier {
         notifyListeners();
 
         return true;
-
-      }    
+      }
 
       carregandoTela = false;
       notifyListeners();
       return false;
-      
-    }on Exception catch (exception) {
+    } on Exception catch (exception) {
       error = exception;
       carregandoTela = false;
       notifyListeners();
       return false;
     }
-    
-        
   }
 
-  void _validacoesCamposOcorrencia(){
-
-    final brasilia = tz.getLocation('America/Sao_Paulo');    
+  void _validacoesCamposOcorrencia() {
+    final brasilia = tz.getLocation('America/Sao_Paulo');
     var dataHoraAtual = tz.TZDateTime.now(brasilia);
 
-    if(dataSelecionada!.isAfter(dataHoraAtual)){
+    if (dataSelecionada!.isAfter(dataHoraAtual)) {
       throw Exception("Data selecionada é maior que a data atual");
     }
   }
 
   Future<void> selectDate(BuildContext context) async {
-
-    final brasilia = tz.getLocation('America/Sao_Paulo');    
+    final brasilia = tz.getLocation('America/Sao_Paulo');
     dataInicial ??= tz.TZDateTime.now(brasilia);
 
     dataInicial ??= DateTime.now();
@@ -154,7 +155,13 @@ class OcorrenciaViewModel extends ChangeNotifier {
 
     if (hora == null) return;
 
-    dataSelecionada = DateTime(data.year,data.month,data.day,hora.hour,hora.minute);
+    dataSelecionada = DateTime(
+      data.year,
+      data.month,
+      data.day,
+      hora.hour,
+      hora.minute,
+    );
 
     dateController.text =
         "${data.day.toString().padLeft(2, '0')}/${data.month.toString().padLeft(2, '0')}/${data.year} ${hora.hour.toString().padLeft(2, '0')}:${hora.minute.toString().padLeft(2, '0')}";
@@ -190,7 +197,7 @@ class OcorrenciaViewModel extends ChangeNotifier {
     notifyListeners();
   }
 
-  void resetarControllers(){
+  void resetarControllers() {
     dateController.clear();
     descricaoController.clear();
     numeroAgressoresController.clear();
@@ -213,7 +220,7 @@ class OcorrenciaViewModel extends ChangeNotifier {
       if (retornoLocalizacaoSelecionada != null) {
         localizacaoController.text =
             "Latitude: ${retornoLocalizacaoSelecionada.latitude} - Longitude: ${retornoLocalizacaoSelecionada.longitude} ";
-        latitude= retornoLocalizacaoSelecionada.latitude;
+        latitude = retornoLocalizacaoSelecionada.latitude;
         longitude = retornoLocalizacaoSelecionada.longitude;
         notifyListeners();
       }
