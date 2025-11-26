@@ -1,5 +1,4 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
-using AppNotificacoesCrimesCidade.Application.Helpers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using System;
 using System.Collections.Generic;
@@ -9,8 +8,7 @@ using System.Threading.Tasks;
 
 namespace AppNotificacoesCrimesCidade.Application.Interfaces
 {
-    public interface IOcorrenciaService : IServiceBase<Ocorrencia, OcorrenciaDto, OcorrenciaForm>
+    public interface ILocalizacaoOcorrenciaService : IServiceBase<LocalizacaoOcorrencia, LocalizacaoOcorrenciaDto, LocalizacaoOcorrenciaForm>
     {
-        Task<Result<IReadOnlyList<OcorrenciaDto>>> GetAllDateFilterAsync(DateTime dataInicio, DateTime dataFim);
     }
 }

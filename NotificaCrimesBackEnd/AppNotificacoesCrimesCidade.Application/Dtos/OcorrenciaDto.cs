@@ -16,7 +16,13 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public DateTime DataHora { get; set; }
 
-        public string? LocalizacaoId { get; set; }
+        public LocalizacaoOcorrenciaDto Localizacao { get; set; }
+
+        public AssaltoDto? Assalto { get; set; }
+
+        public AgressaoDto? Agressao { get; set; }
+
+        public RouboDto? Roubo { get; set; }
 
     }
 }

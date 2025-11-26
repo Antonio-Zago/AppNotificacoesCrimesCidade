@@ -4,6 +4,7 @@ import 'package:notifica_crimes_frontend/data/services/model/agressao_request/ag
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/bens_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/ocorrencia_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/place_detail_response/place_detail_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
@@ -99,6 +100,31 @@ class ApiClient {
     }
   }
 
+  Future<Result<List<OcorrenciaApiModel>>> getAllOcorrencias(DateTime dataInicio, DateTime dataFim) async {
+    try {
+      List<OcorrenciaApiModel> dtos = [];
+
+      var ocorrencias = await dio.get(
+        '${ApiRoutes.urlBase}/Ocorrencia',
+        queryParameters: {
+          'dataInicio': dataInicio.toIso8601String(),
+          'dataFim': dataFim.toIso8601String(),
+        },
+      );
+
+      for (var ocorrenciaJson in ocorrencias.data) {
+        var dto = OcorrenciaApiModel.fromJson(ocorrenciaJson);
+        dtos.add(dto);
+      }
+
+      return Success(dtos);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
   Exception _handleDioError(DioException e) {
     switch (e.type) {
       case DioExceptionType.connectionTimeout:
@@ -115,9 +141,9 @@ class ApiClient {
             'Erro na resposta do servidor ($statusCode).';
         return Exception(message);
       case DioExceptionType.cancel:
-        return Exception( 'Requisição cancelada.');
+        return Exception('Requisição cancelada.');
       case DioExceptionType.unknown:
-        return Exception( 'Erro de rede ou servidor indisponível.');
+        return Exception('Erro de rede ou servidor indisponível.');
       default:
         return Exception('Erro desconhecido.');
     }

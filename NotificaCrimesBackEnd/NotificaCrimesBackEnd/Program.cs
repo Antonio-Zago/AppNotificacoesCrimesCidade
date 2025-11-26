@@ -1,4 +1,5 @@
-﻿using AppNotificacoesCrimesCidade.Application.Interfaces;
+﻿using AppNotificacoesCrimesCidade.Application.Helpers;
+using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Application.Services;
 using AppNotificacoesCrimesCidade.CrossCutting.Ioc;
@@ -23,9 +24,12 @@ builder.Services.AddScoped<IServiceFactory, ServiceFactory>();
 builder.Services.AddScoped<IAssaltoService, AssaltoService>();
 builder.Services.AddScoped<ITipoArmaService, TipoArmaService>();
 builder.Services.AddScoped<ITipoBemService, TipoBemService>();
+builder.Services.AddScoped<ILocalizacaoOcorrenciaService, LocalizacaoOcorrenciaService>();
+builder.Services.AddScoped<IOcorrenciaService,OcorrenciaService>();
 builder.Services.AddScoped<IHashidsPublicIdService, HashidsPublicIdService>();
 builder.Services.AddScoped<IRouboService, RouboService>();
 builder.Services.AddScoped(typeof(IMapperBase<,,>), typeof(MapperBase<,,>));
+builder.Services.AddTransient<IQuery, Query>();
 
 var app = builder.Build();
 

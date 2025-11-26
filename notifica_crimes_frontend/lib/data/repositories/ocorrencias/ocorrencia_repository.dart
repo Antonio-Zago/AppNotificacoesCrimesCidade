@@ -1,4 +1,5 @@
 
+import 'package:notifica_crimes_frontend/domain/models/mapa/ocorrencias/ocorrencia_map.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/agressao.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/armas.dart';
 import 'package:notifica_crimes_frontend/domain/models/ocorrencias/assalto.dart';
@@ -12,4 +13,5 @@ abstract class OcorrenciaRepository {
   Future<Result<void>> postAssalto(Assalto assalto);
   Future<Result<void>> postRoubo(Roubo roubo);
   Future<Result<void>> postAgressao(Agressao agressao);
+  Future<Result<List<OcorrenciaMap>>> getAllOcorrencias(DateTime dataInicio, DateTime dataFim);
 }

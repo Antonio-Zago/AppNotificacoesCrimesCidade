@@ -29,36 +29,6 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             _hashidsPublicIdService = hashidsPublicIdService;
         }
 
-        public async override Task<Result<IReadOnlyList<AssaltoDto>>> GetAllAsync()
-        {
-            List<AssaltoDto> dtos = new List<AssaltoDto>();
-
-            try
-            {
-                var entidades = await _unitOfWork.AssaltoRepository.GetAllAsync();
-
-                foreach (var entidade in entidades)
-                {
-                    var ocorrencia = await _unitOfWork.OcorrenciaRepository.GetByIdAsync(entidade.OcorrenciaId);
-
-                    var dto = new AssaltoDto()
-                    {
-                        Id = _hashidsPublicIdService.ToPublic(entidade.Id),
-                        DataHora = ocorrencia.DataHora.ToLocalTime() //No banco de dados está armazenado em UTC, preciso converter para horário local
-                    };
-
-                    dtos.Add(dto);
-                }
-
-                return Result<IReadOnlyList<AssaltoDto>>.Success(dtos.AsReadOnly());
-            }
-            catch (Exception ex)
-            {
-                return Result<IReadOnlyList<AssaltoDto>>.Failure(new ErrorDefault(ex.Message));
-            }
-           
-        }
-
         public async override Task<Result<AssaltoDto>> AddAsync(AssaltoForm form)
         {
             try

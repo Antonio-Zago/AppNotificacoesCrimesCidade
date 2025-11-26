@@ -22,7 +22,5 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public string? TipoArmaId { get; set; }
 
-        public DateTime DataHora { get; set; }
-
     }
 }

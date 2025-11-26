@@ -56,6 +56,8 @@ class OcorrenciaViewModel extends ChangeNotifier {
     error = null;
   }
 
+  
+
   Future<bool> saveOcorrencia() async {
     carregandoTela = true;
     notifyListeners();
@@ -102,7 +104,7 @@ class OcorrenciaViewModel extends ChangeNotifier {
           var retorno = await ocorrenciaRepository.postRoubo(rouboRequest);
 
           retorno.getOrThrow();
-        }else if (tipo == "A") {
+        } else if (tipo == "A") {
           var agressaoRequest = Agressao(
             qtdAgressores: int.parse(numeroAgressoresController.text),
             fisica: tipoAgressao == "F" || tipoAgressao == "A",
@@ -110,7 +112,9 @@ class OcorrenciaViewModel extends ChangeNotifier {
             ocorrencia: ocorrenciaRequest,
           );
 
-          var retorno = await ocorrenciaRepository.postAgressao(agressaoRequest);
+          var retorno = await ocorrenciaRepository.postAgressao(
+            agressaoRequest,
+          );
 
           retorno.getOrThrow();
         }

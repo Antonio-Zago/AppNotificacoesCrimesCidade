@@ -20,10 +20,13 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
         private readonly IMapperBase<Agressao, AgressaoDto, AgressaoForm> _mapper;
 
+        private readonly IHashidsPublicIdService _hashidsPublicIdService;
+
         public AgressaoService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Agressao, AgressaoDto, AgressaoForm> mapper) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
+            _hashidsPublicIdService = hashidsPublicIdService;
         }
 
         public async override Task<Result<AgressaoDto>> AddAsync(AgressaoForm form)
@@ -75,5 +78,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             }
 
         }
+
+        
     }
 }
