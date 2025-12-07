@@ -1,9 +1,11 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace NotificaCrimesBackEnd.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class OcorrenciaController : ControllerBase
@@ -15,6 +17,7 @@ namespace NotificaCrimesBackEnd.Controllers
             _service = service;
         }
 
+        [AllowAnonymous]
         [HttpGet]
         public async Task<ActionResult<IEnumerable<OcorrenciaDto>>> GetAllAsync([FromQuery] DateTime dataInicio, [FromQuery] DateTime dataFim)
         {

@@ -1,11 +1,13 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Dtos;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Domain.Entities;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System.Threading.Tasks;
 
 namespace NotificaCrimesBackEnd.Controllers
 {
+    [Authorize]
     [Route("[controller]")]
     [ApiController]
     public class AgressaoController : ControllerBase

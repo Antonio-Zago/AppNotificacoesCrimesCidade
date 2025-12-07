@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
@@ -10,15 +11,17 @@ import 'package:uuid/uuid.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class HomeViewModel extends ChangeNotifier {
-  HomeViewModel({
+  HomeViewModel( {
     required this.mapRepository,
     required this.uuid,
     required this.ocorrenciaRepository,
+    required this.storage,
   });
 
   final MapRepository mapRepository;
   final OcorrenciaRepository ocorrenciaRepository;
   final Uuid uuid;
+  final FlutterSecureStorage storage;
 
   bool digitando = false;
   String sessionId = "";
@@ -29,11 +32,14 @@ class HomeViewModel extends ChangeNotifier {
   bool carregandoTela = false;
   List<OcorrenciaMap> ocorrencias = [];
   String valorSelecionado = "ano";
+  bool estaLogado = false;
 
   Future<void> initState() async {
     try {
       carregandoTela = true;
       notifyListeners();
+
+      await _defineSeEstaLogado();
 
       final brasilia = tz.getLocation('America/Sao_Paulo');
       var dataFim = tz.TZDateTime.now(brasilia);
@@ -345,5 +351,19 @@ class HomeViewModel extends ChangeNotifier {
   _limparControllers() {
     controllerSearch.clear();
     placesPrediction.clear();
+  }
+
+  Future<void> _defineSeEstaLogado() async{
+
+    estaLogado = false;
+
+    final token = await storage.read(key: "token");
+    
+    if(token != null ){
+      if(token.isNotEmpty){
+        estaLogado = true;
+      }
+    }
+    
   }
 }

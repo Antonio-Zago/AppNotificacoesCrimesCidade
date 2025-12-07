@@ -26,8 +26,10 @@ builder.Services.AddScoped<ITipoArmaService, TipoArmaService>();
 builder.Services.AddScoped<ITipoBemService, TipoBemService>();
 builder.Services.AddScoped<ILocalizacaoOcorrenciaService, LocalizacaoOcorrenciaService>();
 builder.Services.AddScoped<IOcorrenciaService,OcorrenciaService>();
+builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IHashidsPublicIdService, HashidsPublicIdService>();
 builder.Services.AddScoped<IRouboService, RouboService>();
+builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped(typeof(IMapperBase<,,>), typeof(MapperBase<,,>));
 builder.Services.AddTransient<IQuery, Query>();
 

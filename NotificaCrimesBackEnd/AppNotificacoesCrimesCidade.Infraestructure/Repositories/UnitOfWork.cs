@@ -92,6 +92,16 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Repositories
             }
         }
 
+        private IUsuarioRepository? _usuarioRepository;
+
+        public IUsuarioRepository UsuarioRepository
+        {
+            get
+            {
+                return _usuarioRepository = _usuarioRepository ?? new UsuarioRepository(_context);
+            }
+        }
+
         public async Task<int> CommitAsync()
         {
             return await _context.SaveChangesAsync();

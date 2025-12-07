@@ -1,0 +1,236 @@
+﻿using AppNotificacoesCrimesCidade.Application.Dtos;
+using AppNotificacoesCrimesCidade.Application.Exceptions;
+using AppNotificacoesCrimesCidade.Application.Helpers;
+using AppNotificacoesCrimesCidade.Application.Interfaces;
+using AppNotificacoesCrimesCidade.Application.Mappers;
+using AppNotificacoesCrimesCidade.Domain.Entities;
+using AppNotificacoesCrimesCidade.Domain.Interfaces;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
+using System;
+using System.Collections.Generic;
+using System.IdentityModel.Tokens.Jwt;
+using System.Linq;
+using System.Security.Claims;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace AppNotificacoesCrimesCidade.Application.Services
+{
+    public class UsuarioService : ServiceBase<Usuario, UsuarioDto, UsuarioForm>, IUsuarioService
+    {
+        private readonly IUnitOfWork _unitOfWork;
+
+        private readonly IMapperBase<Usuario, UsuarioDto, UsuarioForm> _mapper;
+
+        private readonly IHashidsPublicIdService _hashidsPublicIdService;
+
+        private readonly ITokenService _tokenService;
+
+        private readonly IConfiguration _config;
+        public UsuarioService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Usuario, UsuarioDto, UsuarioForm> mapper, ITokenService tokenService, IConfiguration config) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
+        {
+            _unitOfWork = unitOfWork;
+            _mapper = mapper;
+            _hashidsPublicIdService = hashidsPublicIdService;
+            _tokenService = tokenService;
+            _config = config;
+        }
+
+        private async Task<UsuarioDto> FindByEmail(string email)
+        {
+
+            var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(email);
+            if (usuario != null)
+            {
+                return _mapper.ConvertToDto(usuario);
+            }
+            throw new Exception($"Não encontrado usuário com o email: {email}");
+
+        }
+
+        private async Task<UsuarioDto> FindByUserName(string userName)
+        {
+
+            var usuario = await _unitOfWork.UsuarioRepository.FindByUserName(userName);
+            if (usuario != null)
+            {
+                return _mapper.ConvertToDto(usuario);
+            }
+            throw new Exception($"Não encontrado usuário com o userName: {userName}");
+
+        }
+
+        public async Task<Result<UsuarioLoginDto>> Login(UsuarioLoginForm model)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var user = await FindByEmail(model.Email);
+
+                if (user is null || !CheckPassword(model.Senha, user.Senha))
+                {
+                    return Result<UsuarioLoginDto>.Failure(
+                        new ErrorDefault("Usuário ou senha inválidos", StatusCodes.Status401Unauthorized)
+                    );
+                }
+
+                var authClaims = new List<Claim>
+                {
+                    new Claim(ClaimTypes.Name, user.Nome),
+                    new Claim(ClaimTypes.Email, user.Email),
+                    new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                };
+
+
+                var token = _tokenService.GenerateAccessToken(authClaims,
+                                                             _config);
+
+                var refreshToken = _tokenService.GenerateRefreshToken();
+
+                _ = int.TryParse(_config["JWT:RefreshTokenValidityInMinutes"],
+                                   out int refreshTokenValidityInMinutes);
+
+                user.RefreshTokenExpiryTime =
+                                DateTime.Now.AddMinutes(refreshTokenValidityInMinutes);
+
+                user.RefreshToken = refreshToken;
+
+                await UpdateRefreshToken(user.Id, user);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<UsuarioLoginDto>.Success(new UsuarioLoginDto
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(token),
+                    RefreshToken = refreshToken,
+                    Expiration = token.ValidTo,
+                    Usuario = user.Nome,
+                    Email = user.Email
+                });
+                
+                throw new Exception($"Não encontrado usuário");
+
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();   
+                return Result<UsuarioLoginDto>.Failure(new ErrorDefault(ex.Message));
+            }
+
+        }
+
+        public async Task<Result<TokenDto>> RefreshToken(TokenForm tokenForm)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                string? accessToken = tokenForm.AccessToken
+                                  ?? throw new ArgumentNullException(nameof(tokenForm));
+
+                string? refreshToken = tokenForm.RefreshToken
+                                       ?? throw new ArgumentException(nameof(tokenForm));
+
+                var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken!, _config);
+
+                if (principal == null)
+                {
+                    throw new Exception("Invalid access token/refresh token");
+                }
+                string username = principal.Identity.Name;
+
+                var user = await FindByUserName(username!);
+
+                if (user == null || user.RefreshToken != refreshToken
+                                 || user.RefreshTokenExpiryTime <= DateTime.Now)
+                {
+                    throw new Exception("Invalid access token/refresh token");
+                }
+
+                var newAccessToken = _tokenService.GenerateAccessToken(
+                                                   principal.Claims.ToList(), _config);
+
+                var newRefreshToken = _tokenService.GenerateRefreshToken();
+
+                user.RefreshToken = newRefreshToken;
+
+                await UpdateRefreshToken(user.Id, user);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<TokenDto>.Success(new TokenDto()
+                {
+                    Token = new JwtSecurityTokenHandler().WriteToken(newAccessToken),
+                    RefreshToken = newRefreshToken
+                });
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<TokenDto>.Failure(new ErrorDefault(ex.Message));
+            }
+
+        }
+
+        private bool CheckPassword(string senhaForm, string senha)
+        {
+            return senhaForm.GerarHash() == senha;
+        }
+
+        private async Task<UsuarioDto?> UpdateRefreshToken(string id, UsuarioDto dto)
+        {
+            var idBanco = _hashidsPublicIdService.ToInternal(id);
+
+            var entidadeBanco = await _unitOfWork.UsuarioRepository.GetByIdAsync(idBanco.Value);
+
+            if (entidadeBanco == null)
+            {
+                return null;
+            }
+
+            entidadeBanco.RefreshToken = dto.RefreshToken;
+            entidadeBanco.RefreshTokenExpiryTime = DateTime.SpecifyKind(dto.RefreshTokenExpiryTime.Value, DateTimeKind.Local).ToUniversalTime();
+
+            var entidadeAtualizada = await _unitOfWork.UsuarioRepository.UpdateAsync(entidadeBanco);
+
+            return _mapper.ConvertToDto(entidadeAtualizada);
+        }
+
+        public async override Task<Result<UsuarioDto>> AddAsync(UsuarioForm form)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuario = new Usuario()
+                {
+                    Email = form.Email,
+                    Nome = form.Nome,
+                    Senha = form.Senha.GerarHash()
+                };
+
+                var entidadeSalva = await _unitOfWork.UsuarioRepository.AddAsync(usuario);
+
+                var dto = _mapper.ConvertToDto(entidadeSalva);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<UsuarioDto>.Success(dto);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<UsuarioDto>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+    }
+}

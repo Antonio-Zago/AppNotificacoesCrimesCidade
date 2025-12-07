@@ -57,6 +57,10 @@
             "Hashids.net": {
               "target": "Package",
               "version": "[1.7.0, )"
+            },
+            "Microsoft.AspNetCore.Authentication.JwtBearer": {
+              "target": "Package",
+              "version": "[8.0.22, )"
             }
           },
           "imports": [

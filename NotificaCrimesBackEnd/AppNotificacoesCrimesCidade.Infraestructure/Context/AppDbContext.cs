@@ -26,6 +26,7 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Context
             modelBuilder.Entity<TipoArma>().ToTable("tipo_armas");
             modelBuilder.Entity<Roubo>().ToTable("roubos");
             modelBuilder.Entity<RouboTipoBem>().ToTable("roubos_tipo_bens");
+            modelBuilder.Entity<Usuario>().ToTable("usuarios");
 
             modelBuilder.Entity<AssaltoTipoBem>()
                 .HasKey(ea => new { ea.TipoBemId, ea.AssaltoId });  // Chave primária composta
@@ -51,6 +52,8 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Context
         public DbSet<Roubo> Roubos { get; set; }
 
         public DbSet<RouboTipoBem> RouboTipoBens { get; set; }
+
+        public DbSet<Usuario> Usuarios { get; set; }
 
     }
 }

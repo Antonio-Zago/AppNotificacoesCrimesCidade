@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/button_default.dart';
+import 'package:notifica_crimes_frontend/ui/core/ui/button_small_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/circular_progress_indicator_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/text_form_field_login_cadastro.dart';
 import 'package:notifica_crimes_frontend/ui/login/view_model/login_view_model.dart';
@@ -15,8 +16,7 @@ class LoginScreen extends StatefulWidget {
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  final TextEditingController controllerUsuario = TextEditingController();
-  final TextEditingController controllerSenha = TextEditingController();
+  
 
   @override
   Widget build(BuildContext context) {
@@ -63,7 +63,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                 TextFormFieldLoginCadastro(
                                   label: "Usuário",
                                   prefixIcon: Icon(Icons.person),
-                                  controller: controllerUsuario,
+                                  controller: widget.viewModel.controllerUsuario,
                                   enabled: !widget.viewModel.carregando,
                                 ),
                                 Padding(
@@ -71,7 +71,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   child: TextFormFieldLoginCadastro(
                                     label: "Senha",
                                     prefixIcon: Icon(Icons.lock),
-                                    controller: controllerSenha,
+                                    controller: widget.viewModel.controllerSenha,
                                     password: true,
                                     enabled: !widget.viewModel.carregando,
                                   ),
@@ -114,6 +114,21 @@ class _LoginScreenState extends State<LoginScreen> {
                                                 label: "Criar conta",
                                                 icon: Icons.person_add,
                                                 backgroundColor: Color(ColorsConstants.azulPadraoApp),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsGeometry.only(
+                                                top: 25,
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: ButtonSmallDefault(
+                                                  icon: Icons.arrow_back,
+                                                  label: "Tela principal",
+                                                  onPressed: () => widget
+                                                    .viewModel
+                                                    .onPressedButtonReturn(context),
+                                                )
                                               ),
                                             ),
                                           ],

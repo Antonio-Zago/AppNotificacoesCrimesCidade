@@ -35,136 +35,146 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
-    Future.microtask(() {
-      widget.viewModel.initState();
+    Future.microtask(() async {
+      await widget.viewModel.initState();
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      key: _scaffoldKey,
-      drawer: DrawerDefault(),
-      body: ListenableBuilder(
-        listenable: widget.viewModel,
-        builder: (BuildContext context, _) {
-          return widget.viewModel.carregandoTela
-              ? Center(
-                  child: SizedBox(
-                    width: 80, // tamanho personalizado
-                    height: 80,
-                    child: CircularProgressIndicatorDefault(),
+    return ListenableBuilder(
+      listenable: widget.viewModel,
+      builder: (BuildContext context, _) {
+        if (widget.viewModel.carregandoTela) {
+          return const Scaffold(
+            body: Center(
+              child: SizedBox(
+                width: 80, // tamanho personalizado
+                height: 80,
+                child: CircularProgressIndicatorDefault(),
+              ),
+            ),
+          );
+        }
+
+        return Scaffold(
+          key: _scaffoldKey,
+          drawer: DrawerDefault(estaLogado: widget.viewModel.estaLogado),
+          body: ListenableBuilder(
+            listenable: widget.viewModel,
+            builder: (BuildContext context, _) {
+              return Stack(
+                children: [
+                  GoogleMap(
+                    initialCameraPosition: CameraPosition(
+                      target: LatLng(-23.22815468536845, -45.896856363457964),
+                      zoom: 14.4746,
+                    ),
+                    onMapCreated: (controller) {
+                      if (!widget.viewModel.controllerPlace.isCompleted) {
+                        widget.viewModel.controllerPlace.complete(controller);
+                      }
+                    },
+
+                    markers: widget.viewModel.retornarMarcadoresOcorrencias(
+                      context,
+                    ),
                   ),
-                )
-              : Stack(
-                  children: [
-                    GoogleMap(
-                      initialCameraPosition: CameraPosition(
-                        target: LatLng(-23.22815468536845, -45.896856363457964),
-                        zoom: 14.4746,
+                  Positioned(
+                    top: 40,
+                    left: 0,
+                    child: Container(
+                      decoration: BoxDecoration(
+                        shape: BoxShape.rectangle,
+                        borderRadius: BorderRadius.only(
+                          bottomRight: Radius.circular(15),
+                          topRight: Radius.circular(15),
+                        ),
+                        color: Color(ColorsConstants.azulPadraoApp),
                       ),
-                      onMapCreated: (controller) {
-                        if (!widget.viewModel.controllerPlace.isCompleted) {
-                          widget.viewModel.controllerPlace.complete(controller);
-                        }
-                      },
 
-                      markers: widget.viewModel.retornarMarcadoresOcorrencias(
-                        context,
+                      child: IconButton(
+                        onPressed: () {
+                          _scaffoldKey.currentState!.openDrawer();
+                        },
+                        icon: Icon(Icons.menu, color: Colors.white, size: 35),
                       ),
                     ),
-                    Positioned(
-                      top: 40,
-                      left: 0,
-                      child: Container(
-                        decoration: BoxDecoration(
-                          shape: BoxShape.rectangle,
-                          borderRadius: BorderRadius.only(
-                            bottomRight: Radius.circular(15),
-                            topRight: Radius.circular(15),
-                          ),
+                  ),
+
+                  Positioned(
+                    top: 150,
+                    left: 10,
+                    child: Container(
+                      padding: EdgeInsets.symmetric(horizontal: 12),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                        border: Border.all(
                           color: Color(ColorsConstants.azulPadraoApp),
-                        ),
-
-                        child: IconButton(
-                          onPressed: () {
-                            _scaffoldKey.currentState!.openDrawer();
-                          },
-                          icon: Icon(Icons.menu, color: Colors.white, size: 35),
+                          width: 1.5,
                         ),
                       ),
-                    ),
-
-                    Positioned(
-                      top: 150,
-                      left: 10,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 12),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
+                      child: DropdownButtonHideUnderline(
+                        child: DropdownButton<String>(
+                          value: widget.viewModel.valorSelecionado,
+                          icon: Icon(
+                            Icons.arrow_drop_down,
                             color: Color(ColorsConstants.azulPadraoApp),
-                            width: 1.5,
                           ),
-                        ),
-                        child: DropdownButtonHideUnderline(
-                          child: DropdownButton<String>(
-                            value: widget.viewModel.valorSelecionado,
-                            icon: Icon(
-                              Icons.arrow_drop_down,
-                              color: Color(ColorsConstants.azulPadraoApp),
-                            ),
-                            style: TextStyle(
-                              color: Color(ColorsConstants.azulPadraoApp),
-                              fontSize: 14,
-                            ),
-                            items: const [
-                              DropdownMenuItem(
-                                value: "ano",
-                                child: Text("Ano anterior"),
-                              ),
-                              DropdownMenuItem(
-                                value: "mes",
-                                child: Text("Mês anterior"),
-                              ),
-                              DropdownMenuItem(
-                                value: "semana",
-                                child: Text("Semana anterior"),
-                              ),
-                            ],
-                            onChanged: (value) async {
-                              await widget.viewModel
-                                  .alterarFiltroDataSelecionada(value!);
-                            },
+                          style: TextStyle(
+                            color: Color(ColorsConstants.azulPadraoApp),
+                            fontSize: 14,
                           ),
+                          items: const [
+                            DropdownMenuItem(
+                              value: "ano",
+                              child: Text("Ano anterior"),
+                            ),
+                            DropdownMenuItem(
+                              value: "mes",
+                              child: Text("Mês anterior"),
+                            ),
+                            DropdownMenuItem(
+                              value: "semana",
+                              child: Text("Semana anterior"),
+                            ),
+                          ],
+                          onChanged: (value) async {
+                            await widget.viewModel.alterarFiltroDataSelecionada(
+                              value!,
+                            );
+                          },
                         ),
                       ),
                     ),
+                  ),
 
-                    Positioned(
-                      top: 40,
-                      left: 0,
-                      right: 0,
-                      bottom: 0,
-                      child: Align(
-                        alignment: Alignment.center,
-                        child: SearchTextFormField(
-                          controllerSearch: widget.viewModel.controllerSearch,
-                          digitando: widget.viewModel.digitando,
-                          onTapCloseButton: widget.viewModel.onTapCloseButton,
-                          onChangedSearch: widget.viewModel.onChangedSearch,
-                          onTapSearchText: widget.viewModel.onTapSearchText,
-                          placesPrediction: widget.viewModel.placesPrediction,
-                          onTapSearchLocation:
-                              widget.viewModel.onTapSearchLocation,
-                        ),
+                  Positioned(
+                    top: 40,
+                    left: 0,
+                    right: 0,
+                    bottom: 0,
+                    child: Align(
+                      alignment: Alignment.center,
+                      child: SearchTextFormField(
+                        controllerSearch: widget.viewModel.controllerSearch,
+                        digitando: widget.viewModel.digitando,
+                        onTapCloseButton: widget.viewModel.onTapCloseButton,
+                        onChangedSearch: widget.viewModel.onChangedSearch,
+                        onTapSearchText: widget.viewModel.onTapSearchText,
+                        placesPrediction: widget.viewModel.placesPrediction,
+                        onTapSearchLocation:
+                            widget.viewModel.onTapSearchLocation,
                       ),
                     ),
-                  ],
-                );
-        },
-      ),
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+      },
     );
   }
 }

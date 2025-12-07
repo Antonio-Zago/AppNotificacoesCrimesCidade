@@ -1,13 +1,15 @@
 ﻿using AppNotificacoesCrimesCidade.Infraestructure.Context;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.IdentityModel.Tokens;
+using NetTopologySuite;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.Extensions.Configuration;
-using Microsoft.EntityFrameworkCore;
-using NetTopologySuite;
 
 
 namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
@@ -16,6 +18,33 @@ namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
     {
         public static IServiceCollection AddInfraestructure(this IServiceCollection services, IConfigurationManager configuration)
         {
+            services.AddAuthorization();
+
+            var secretKey = configuration["JWT:SecretKey"]
+                   ?? throw new ArgumentException("Invalid secret key!!");
+
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+            }).AddJwtBearer(options =>
+            {
+                options.SaveToken = true;
+                options.RequireHttpsMetadata = false;
+                options.TokenValidationParameters = new TokenValidationParameters()
+                {
+                    ValidateIssuer = true,
+                    ValidateAudience = true,
+                    ValidateLifetime = true,
+                    ValidateIssuerSigningKey = true,
+                    ClockSkew = TimeSpan.Zero,
+                    ValidAudience = configuration["JWT:ValidAudience"],
+                    ValidIssuer = configuration["JWT:ValidIssuer"],
+                    IssuerSigningKey = new SymmetricSecurityKey(
+                                       Encoding.UTF8.GetBytes(secretKey))
+                };
+            });
+
             var postgresConnection = configuration.GetConnectionString("DefaultConnection");
 
             services.AddDbContext<AppDbContext>(options => options.UseNpgsql(postgresConnection, o => {

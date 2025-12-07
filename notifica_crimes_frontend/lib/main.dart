@@ -4,6 +4,8 @@ import 'package:dio/dio.dart';
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/config/dependencies.dart';
+import 'package:notifica_crimes_frontend/config/interceptors/auth_redirect.dart';
+import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
@@ -33,25 +35,37 @@ void main() {
   runApp(
     MultiProvider(
       providers: providersRemote,
-      child: const MyApp(),
+      child: MyApp(),
     ),
   );
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({super.key});
+  MyApp({super.key});
+
+  final GlobalKey<NavigatorState> globalNavigatorKey = GlobalKey<NavigatorState>();
 
   @override
   Widget build(BuildContext context) {
+
+    // Registro do callback global
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      AuthRedirect.goToLogin = () {
+        Navigator.of(globalNavigatorKey.currentContext!)
+            .pushNamedAndRemoveUntil('/login', (_) => false);
+      };
+    });
+
     return MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: "Open_sans", useMaterial3: true),
+      navigatorKey: globalNavigatorKey,
       routes: {
-        '/': (context) => LoginScreen(viewModel: LoginViewModel()),
+        '/login': (context) => LoginScreen(viewModel: LoginViewModel(loginRepository: context.read<LoginRepository>())),
         '/register': (context) =>
             RegisterScreen(viewModel: RegisterViewModel()),
-        '/home': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>())),
+        '/': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>(), storage: context.read())),
         '/ocorrencia': (context) => OcorrenciaScreen(viewModel: OcorrenciaViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
         '/choose-location-map': (context) => ChooseLocationMapScreen(viewModel: ChooseLocationMapViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid())),
         '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>()))

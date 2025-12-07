@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/login_response/login_response_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/bens_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/ocorrencia_api_model.dart';
@@ -136,9 +138,17 @@ class ApiClient {
       case DioExceptionType.badResponse:
         // Erros HTTP (ex: 400, 404, 500)
         final statusCode = e.response?.statusCode;
-        final message =
-            e.response?.data?['message'] ??
-            'Erro na resposta do servidor ($statusCode).';
+
+        var message = 'Erro na resposta do servidor ($statusCode).';
+
+        if(statusCode == 401){
+          message = 'Erro na autenticação ($statusCode).';
+        }
+
+        if(e.response?.data != ""){
+          message = e.response?.data?['message'];
+        }
+
         return Exception(message);
       case DioExceptionType.cancel:
         return Exception('Requisição cancelada.');
@@ -187,6 +197,8 @@ class ApiClient {
       }
 
       return Success(retorno);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
     } on Exception catch (exception) {
       return Failure(Exception(exception));
     }
@@ -205,6 +217,20 @@ class ApiClient {
       }
 
       return Success(retorno);
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<LoginResponseApiModel>> login(LoginRequestApiModel request) async {
+    try {
+
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/auth/login',
+        data: request.toJson(),
+      );
+
+      return Success(LoginResponseApiModel.fromJson(retorno.data));
     } on Exception catch (exception) {
       return Failure(Exception(exception));
     }
