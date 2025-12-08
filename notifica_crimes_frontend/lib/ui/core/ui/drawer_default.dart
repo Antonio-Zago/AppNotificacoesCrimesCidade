@@ -2,9 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 
 class DrawerDefault extends StatefulWidget {
-  const DrawerDefault({super.key, required this.estaLogado});
+  const DrawerDefault({super.key, required this.estaLogado, required this.sair});
 
   final bool estaLogado;
+  final Future<void> Function() sair;
 
   @override
   State<DrawerDefault> createState() => _DrawerDefaultState();
@@ -25,57 +26,61 @@ class _DrawerDefaultState extends State<DrawerDefault> {
         ),
         child: ListView(
           children: [
-            if(widget.estaLogado)
+            if (widget.estaLogado) ...[
               UserAccountsDrawerHeader(
                 decoration: BoxDecoration(
                   color: Color(ColorsConstants.azulPadraoApp),
                 ),
                 accountName: Text(
                   "Nome usuário",
-                  style: TextStyle(
-                    fontWeight: FontWeight.bold
-                  ),
+                  style: TextStyle(fontWeight: FontWeight.bold),
                 ),
                 accountEmail: Text("Email usuário"),
-                currentAccountPicture: CircleAvatar(radius: 30.0,
-                backgroundImage: AssetImage("assets/images/perfil_exemplo.png"),),
-              ),
-            ListTile(
-              title: Text(
-                "Início",
-                style: TextStyle(
-                  color: Colors.black, 
-                  fontSize: 17,
-                  fontWeight: FontWeight.bold
+                currentAccountPicture: CircleAvatar(
+                  radius: 30.0,
+                  backgroundImage: AssetImage(
+                    "assets/images/perfil_exemplo.png",
+                  ),
                 ),
               ),
-              leading: Icon(
-                Icons.home_outlined, 
-                color: Colors.black,
-                size: 35,
+
+              ListTile(
+                title: Text(
+                  "Início",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                leading: Icon(
+                  Icons.home_outlined,
+                  color: Colors.black,
+                  size: 35,
+                ),
+
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/', (_) => false);
+                },
               ),
-              
-              onTap: () {
-                Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/', (_) => false);
-              },
-            ),
-            if(widget.estaLogado) ...[
+
               ListTile(
                 title: Text(
                   "Nova ocorrência",
                   style: TextStyle(
-                    color: Colors.black, 
+                    color: Colors.black,
                     fontSize: 17,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Icon(
-                  Icons.shield_outlined, 
+                  Icons.shield_outlined,
                   color: Colors.black,
                   size: 35,
                 ),
-                
+
                 onTap: () {
                   Navigator.pushNamed(context, '/ocorrencia');
                 },
@@ -84,81 +89,106 @@ class _DrawerDefaultState extends State<DrawerDefault> {
                 title: Text(
                   "Locais salvos",
                   style: TextStyle(
-                    color: Colors.black, 
+                    color: Colors.black,
                     fontSize: 17,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Icon(
-                  Icons.add_location_outlined, 
+                  Icons.add_location_outlined,
                   color: Colors.black,
                   size: 35,
                 ),
-                
-                onTap: () {
-                  
-                },
+
+                onTap: () {},
               ),
               ListTile(
                 title: Text(
                   "Configuração",
                   style: TextStyle(
-                    color: Colors.black, 
+                    color: Colors.black,
                     fontSize: 17,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Icon(
-                  Icons.settings_outlined, 
+                  Icons.settings_outlined,
                   color: Colors.black,
                   size: 35,
                 ),
-                
-                onTap: () {
-                  
-                },
+
+                onTap: () {},
               ),
-            ],
-            widget.estaLogado?
+
               ListTile(
                 title: Text(
                   "Sair",
                   style: TextStyle(
-                    color: Colors.black, 
+                    color: Colors.black,
                     fontSize: 17,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Icon(
-                  Icons.logout_outlined, 
+                  Icons.logout_outlined,
                   color: Colors.black,
                   size: 35,
                 ),
-                
-                onTap: () {
+
+                onTap: () async{
                   
+                  await widget.sair();
+
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/', (_) => false);
                 },
-              ) :
+              ),
+            ],
+            if (!widget.estaLogado) ...[
               ListTile(
                 title: Text(
                   "Login",
                   style: TextStyle(
-                    color: Colors.black, 
+                    color: Colors.black,
                     fontSize: 17,
-                    fontWeight: FontWeight.bold
+                    fontWeight: FontWeight.bold,
                   ),
                 ),
                 leading: Icon(
-                  Icons.logout_outlined, 
+                  Icons.login_outlined,
                   color: Colors.black,
                   size: 35,
                 ),
-                
+
                 onTap: () {
-                  Navigator.of(context)
-                    .pushNamedAndRemoveUntil('/login', (_) => false);
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/login', (_) => false);
                 },
               ),
+              ListTile(
+                title: Text(
+                  "Cadastro",
+                  style: TextStyle(
+                    color: Colors.black,
+                    fontSize: 17,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+                leading: Icon(
+                  Icons.app_registration_outlined,
+                  color: Colors.black,
+                  size: 35,
+                ),
+
+                onTap: () {
+                  Navigator.of(
+                    context,
+                  ).pushNamedAndRemoveUntil('/register', (_) => false);
+                },
+              ),
+            ],
           ],
         ),
       ),

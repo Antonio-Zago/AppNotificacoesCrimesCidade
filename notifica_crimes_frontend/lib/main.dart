@@ -64,7 +64,7 @@ class MyApp extends StatelessWidget {
       routes: {
         '/login': (context) => LoginScreen(viewModel: LoginViewModel(loginRepository: context.read<LoginRepository>())),
         '/register': (context) =>
-            RegisterScreen(viewModel: RegisterViewModel()),
+            RegisterScreen(viewModel: RegisterViewModel(loginRepository: context.read<LoginRepository>())),
         '/': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>(), storage: context.read())),
         '/ocorrencia': (context) => OcorrenciaScreen(viewModel: OcorrenciaViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
         '/choose-location-map': (context) => ChooseLocationMapScreen(viewModel: ChooseLocationMapViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid())),

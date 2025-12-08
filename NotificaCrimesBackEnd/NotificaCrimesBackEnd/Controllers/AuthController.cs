@@ -29,9 +29,6 @@ namespace NotificaCrimesBackEnd.Controllers
                 onSuccess: user => Ok(user),
                 onFailure: err =>
                 {
-                    if (err.StatusCode == StatusCodes.Status401Unauthorized)
-                        return Unauthorized(err);
-
                     return BadRequest(err);
                 }
                );

@@ -10,6 +10,7 @@ import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse
 import 'package:notifica_crimes_frontend/data/services/model/place_detail_response/place_detail_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -52,7 +53,9 @@ class ApiClient {
       }
 
       return Success(listaPlacePrediction);
-    } on Exception catch (exception) {
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }
@@ -179,7 +182,9 @@ class ApiClient {
       var placeDetail = PlaceDetailApiModel.fromJson(response.data);
 
       return Success(placeDetail);
-    } on Exception catch (exception) {
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }
@@ -217,7 +222,9 @@ class ApiClient {
       }
 
       return Success(retorno);
-    } on Exception catch (exception) {
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }
@@ -231,7 +238,25 @@ class ApiClient {
       );
 
       return Success(LoginResponseApiModel.fromJson(retorno.data));
-    } on Exception catch (exception) {
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> register(RegisterRequestApiModel request) async {
+    try {
+
+      await dio.post(
+        '${ApiRoutes.urlBase}/auth/register',
+        data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }

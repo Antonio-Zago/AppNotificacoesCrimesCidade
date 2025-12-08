@@ -16,10 +16,24 @@ class RegisterScreen extends StatefulWidget {
 }
 
 class _RegisterScreenState extends State<RegisterScreen> {
-  final TextEditingController controllerUsuario = TextEditingController();
-  final TextEditingController controllerEmail = TextEditingController();
-  final TextEditingController controllerSenha = TextEditingController();
-  final TextEditingController controllerRepitaSenha = TextEditingController();
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.addListener(() {
+      final error = widget.viewModel.error;
+      if (error != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+          widget.viewModel.clearError(); // limpa depois que mostrar
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,21 +75,26 @@ class _RegisterScreenState extends State<RegisterScreen> {
                             bottom: 15,
                           ),
                           child: Form(
+                            key: widget.viewModel.formKey,
                             child: Column(
                               children: [
                                 TextFormFieldLoginCadastro(
                                   label: "Usuário",
                                   prefixIcon: Icon(Icons.person),
-                                  controller: controllerUsuario,
+                                  controller:
+                                      widget.viewModel.controllerUsuario,
                                   enabled: !widget.viewModel.carregando,
+                                  mensagemValidacao: "Necessário preencher o campo Usuário",
                                 ),
                                 Padding(
                                   padding: EdgeInsetsGeometry.only(top: 25),
                                   child: TextFormFieldLoginCadastro(
                                     label: "Email",
                                     prefixIcon: Icon(Icons.email),
-                                    controller: controllerEmail,
+                                    controller:
+                                        widget.viewModel.controllerEmail,
                                     enabled: !widget.viewModel.carregando,
+                                    mensagemValidacao: "Necessário preencher o campo Email",
                                   ),
                                 ),
                                 Padding(
@@ -83,9 +102,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: TextFormFieldLoginCadastro(
                                     label: "Senha",
                                     prefixIcon: Icon(Icons.lock),
-                                    controller: controllerSenha,
+                                    controller:
+                                        widget.viewModel.controllerSenha,
                                     password: true,
                                     enabled: !widget.viewModel.carregando,
+                                    mensagemValidacao: "Necessário preencher o campo Senha",
                                   ),
                                 ),
                                 Padding(
@@ -93,9 +114,11 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                   child: TextFormFieldLoginCadastro(
                                     label: "Repita a senha",
                                     prefixIcon: Icon(Icons.lock),
-                                    controller: controllerRepitaSenha,
+                                    controller:
+                                        widget.viewModel.controllerRepitaSenha,
                                     password: true,
                                     enabled: !widget.viewModel.carregando,
+                                    mensagemValidacao: "Necessário preencher o campo Repita a senha",
                                   ),
                                 ),
                                 Padding(
@@ -122,12 +145,46 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                 top: 15,
                                               ),
                                               child: ButtonDefault(
-                                                onPressed: widget
-                                                    .viewModel
-                                                    .onPressedButtonRegister,
+                                                onPressed: () async {
+                                                  var foiSalvo = await widget
+                                                      .viewModel
+                                                      .onPressedButtonRegister();
+
+                                                  // Verifica se o widget ainda está montado (evita erro se a tela for fechada antes)
+                                                  if (!context.mounted) return;
+
+                                                  if (foiSalvo) {
+                                                    // Mostra mensagem de sucesso
+                                                    showDialog(
+                                                      context: context,
+                                                      builder: (context) => AlertDialog(
+                                                        title: const Text(
+                                                          'Sucesso',
+                                                        ),
+                                                        content: const Text(
+                                                          'Usuário cadastrado!',
+                                                        ),
+                                                        actions: [
+                                                          TextButton(
+                                                            onPressed: () =>
+                                                                Navigator.pushNamed(
+                                                                  context,
+                                                                  "/login",
+                                                                ),
+                                                            child: const Text(
+                                                              'OK',
+                                                            ),
+                                                          ),
+                                                        ],
+                                                      ),
+                                                    );
+                                                  }
+                                                },
                                                 label: "Criar conta",
                                                 icon: Icons.person_add,
-                                                backgroundColor: Color(ColorsConstants.azulPadraoApp),
+                                                backgroundColor: Color(
+                                                  ColorsConstants.azulPadraoApp,
+                                                ),
                                               ),
                                             ),
                                             Padding(
@@ -140,9 +197,28 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                                   icon: Icons.arrow_back,
                                                   label: "Voltar ao login",
                                                   onPressed: () => widget
-                                                    .viewModel
-                                                    .onPressedButtonReturn(context),
-                                                )
+                                                      .viewModel
+                                                      .onPressedButtonReturn(
+                                                        context,
+                                                      ),
+                                                ),
+                                              ),
+                                            ),
+                                            Padding(
+                                              padding: EdgeInsetsGeometry.only(
+                                                top: 10,
+                                              ),
+                                              child: Align(
+                                                alignment: Alignment.topLeft,
+                                                child: ButtonSmallDefault(
+                                                  icon: Icons.arrow_back,
+                                                  label: "Tela principal",
+                                                  onPressed: () => widget
+                                                      .viewModel
+                                                      .onPressedButtonReturnHome(
+                                                        context,
+                                                      ),
+                                                ),
                                               ),
                                             ),
                                           ],

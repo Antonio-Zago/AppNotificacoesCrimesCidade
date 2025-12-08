@@ -2,13 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 
 class TextFormFieldLoginCadastro extends StatefulWidget {
-  const TextFormFieldLoginCadastro({super.key, required this.label, required this.prefixIcon, required this.controller, this.password, this.enabled});
+  const TextFormFieldLoginCadastro({super.key, required this.label, required this.prefixIcon, required this.controller, this.password, this.enabled, required this.mensagemValidacao});
 
   final String label;
   final Icon prefixIcon;
   final TextEditingController controller;
   final bool? password;
   final bool? enabled;
+  final String mensagemValidacao;
 
   @override
   State<TextFormFieldLoginCadastro> createState() =>
@@ -38,6 +39,12 @@ class _TextFormFieldLoginCadastroState
       keyboardType: TextInputType.text,
       obscureText: obscuro,
       enabled: widget.enabled,
+      validator: (valor) {
+            if (valor == null || valor.isEmpty) {
+              return widget.mensagemValidacao;
+            }
+            return null; // null = válido
+          },
       decoration: InputDecoration(
         prefixIcon: widget.prefixIcon,
         suffixIcon: ehSenha ? IconButton(

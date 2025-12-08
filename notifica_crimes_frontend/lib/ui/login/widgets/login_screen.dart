@@ -17,6 +17,24 @@ class LoginScreen extends StatefulWidget {
 
 class _LoginScreenState extends State<LoginScreen> {
   
+  @override
+  void initState() {
+    super.initState();
+    widget.viewModel.addListener(() {
+      final error = widget.viewModel.error;
+      if (error != null) {
+        WidgetsBinding.instance.addPostFrameCallback((_) {
+          ScaffoldMessenger.of(context).showSnackBar(
+            SnackBar(
+              content: Text(error.toString()),
+              backgroundColor: Colors.redAccent,
+            ),
+          );
+          widget.viewModel.clearError(); // limpa depois que mostrar
+        });
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,6 +76,7 @@ class _LoginScreenState extends State<LoginScreen> {
                             bottom: 15,
                           ),
                           child: Form(
+                            key: widget.viewModel.formKey,
                             child: Column(
                               children: [
                                 TextFormFieldLoginCadastro(
@@ -65,6 +84,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                   prefixIcon: Icon(Icons.person),
                                   controller: widget.viewModel.controllerUsuario,
                                   enabled: !widget.viewModel.carregando,
+                                  mensagemValidacao: "Necessário preencher o campo Usuário",
                                 ),
                                 Padding(
                                   padding: EdgeInsetsGeometry.only(top: 50),
@@ -74,6 +94,7 @@ class _LoginScreenState extends State<LoginScreen> {
                                     controller: widget.viewModel.controllerSenha,
                                     password: true,
                                     enabled: !widget.viewModel.carregando,
+                                    mensagemValidacao: "Necessário preencher o campo Senha",
                                   ),
                                 ),
                                 Padding(

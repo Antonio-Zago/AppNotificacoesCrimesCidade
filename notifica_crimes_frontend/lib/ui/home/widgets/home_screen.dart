@@ -59,7 +59,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: DrawerDefault(estaLogado: widget.viewModel.estaLogado),
+          drawer: DrawerDefault(estaLogado: widget.viewModel.estaLogado, sair: widget.viewModel.sair,),
           body: ListenableBuilder(
             listenable: widget.viewModel,
             builder: (BuildContext context, _) {

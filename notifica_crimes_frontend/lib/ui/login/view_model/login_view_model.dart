@@ -11,21 +11,33 @@ class LoginViewModel extends ChangeNotifier {
   bool carregando = false;
   TextEditingController controllerUsuario = TextEditingController();
   TextEditingController controllerSenha = TextEditingController();
+  Exception? error;
+  final formKey = GlobalKey<FormState>();
 
   Future<void> onPressedButtonLogin(BuildContext context) async {
     try {
       carregando = true;
       notifyListeners(); 
 
-      var usuario = await loginRepository.login(controllerUsuario.text, controllerSenha.text);
+      if (formKey.currentState!.validate()){
+        var retorno = await loginRepository.login(controllerUsuario.text, controllerSenha.text);
 
-      await Navigator.pushNamed(
-        context,
-        "/"
-      );
+        var usuario = retorno.getOrThrow();
+
+        await Navigator.pushNamed(
+          context,
+          "/"
+        );
+        carregando = false;
+      }
 
       carregando = false;
-    } finally {
+    }on Exception catch (exception) {
+      error = exception;
+      carregando = false;
+      notifyListeners();
+    }    
+    finally {
       notifyListeners();
     }
   }
@@ -60,5 +72,9 @@ class LoginViewModel extends ChangeNotifier {
     } finally {
       notifyListeners();
     }
+  }
+
+  void clearError() {
+    error = null;
   }
 }

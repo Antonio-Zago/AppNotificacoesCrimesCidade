@@ -2,6 +2,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/login/user.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -39,6 +40,22 @@ class LoginRepositoryRemote implements LoginRepository{
     }
    
 
+  }
+  
+  @override
+  Future<Result<bool>> register(String nome, String email, String senha) async {
+    try{
+
+      var request = RegisterRequestApiModel(nome: nome, email: email, senha: senha);
+
+      var retorno = await apiClient.register(request);
+
+      var loginApiModel = retorno.getOrThrow();
+
+      return Success(loginApiModel);
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
   }
 
 }

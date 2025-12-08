@@ -366,4 +366,11 @@ class HomeViewModel extends ChangeNotifier {
     }
     
   }
+
+  Future<void> sair() async{
+
+    await storage.delete(key: "token");
+    await storage.delete(key: "refresh_token");
+  
+  }
 }
