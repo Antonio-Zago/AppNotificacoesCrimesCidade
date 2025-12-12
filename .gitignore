@@ -1,2 +1,3 @@
 NotificaCrimesBackEnd/NotificaCrimesBackEnd/appsettings.json
 db/flyway.conf
+NotificaCrimesBackEnd/NotificaCrimesBackEnd/secrets/key.json

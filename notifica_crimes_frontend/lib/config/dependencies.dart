@@ -1,4 +1,5 @@
 import 'package:dio/dio.dart';
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
@@ -7,6 +8,8 @@ import 'package:notifica_crimes_frontend/data/repositories/login/login_repositor
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository_remote.dart';
+import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository.dart';
+import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository_local.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository_remote.dart';
@@ -27,6 +30,7 @@ List<SingleChildWidget> get providersRemote {
 
       return dio;
     } ),    
+    Provider(create: (context) => FirebaseMessaging.instance),
     Provider(create: (context) => ApiClient(dio: context.read())),
     Provider(
       create: (context) =>
@@ -41,6 +45,11 @@ List<SingleChildWidget> get providersRemote {
       create: (context) =>
           LoginRepositoryRemote(apiClient: context.read(), storage: context.read())
               as LoginRepository,
+    ),
+    Provider(
+      create: (context) =>
+          NotificationRepositoryRemote(firebaseMessaging: context.read(), storage: context.read(), apiClient: context.read())
+              as NotificationRepository,
     ),
   ];
 }

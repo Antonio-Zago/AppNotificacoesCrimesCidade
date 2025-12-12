@@ -1,11 +1,14 @@
 ﻿using AppNotificacoesCrimesCidade.Application.Helpers;
 using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Application.Mappers;
+using AppNotificacoesCrimesCidade.Application.Middlewares;
 using AppNotificacoesCrimesCidade.Application.Services;
 using AppNotificacoesCrimesCidade.CrossCutting.Ioc;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using AppNotificacoesCrimesCidade.Infraestructure.Context;
 using AppNotificacoesCrimesCidade.Infraestructure.Repositories;
+using FirebaseAdmin;
+using Google.Apis.Auth.OAuth2;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -17,6 +20,11 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
 builder.Services.AddInfraestructure(builder.Configuration);
+
+FirebaseApp.Create(new AppOptions()
+{
+    Credential = GoogleCredential.FromFile("secrets/key.json")
+});
 
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAgressaoService, AgressaoService>();
@@ -44,6 +52,8 @@ if (app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication(); 
+app.UseMiddleware<SessionValidationMiddleware>(); 
 app.UseAuthorization();
 
 app.MapControllers();

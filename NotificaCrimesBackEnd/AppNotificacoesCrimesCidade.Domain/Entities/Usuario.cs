@@ -26,5 +26,11 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
 
         [Column("refreshtokenexpirytime")]
         public DateTime? RefreshTokenExpiryTime { get; set; }
+
+        [Column("sessionid")]
+        public Guid? SessionId { get; set; }
+
+        [Column("fcmtoken")]
+        public string? FcmToken { get; set; }
     }
 }

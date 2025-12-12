@@ -15,5 +15,7 @@ namespace AppNotificacoesCrimesCidade.Application.Interfaces
 
         Task<Result<TokenDto>> RefreshToken(TokenForm tokenForm);
 
+        Task<Result<bool>> PostFcm(UsuarioFcmForm form);
+
     }
 }

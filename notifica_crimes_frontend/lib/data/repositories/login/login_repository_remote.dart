@@ -1,6 +1,7 @@
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
+import 'package:notifica_crimes_frontend/data/services/model/fcm_request/fcm_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/login/user.dart';
@@ -28,6 +29,14 @@ class LoginRepositoryRemote implements LoginRepository{
       await storage.write(key: 'refresh_token', value: loginApiModel.refreshToken);
       await storage.write(key: 'email', value: loginApiModel.email);
       await storage.write(key: 'usuario', value: loginApiModel.usuario);
+
+      var fcmToken = await storage.read(key: 'fcm');
+
+      var requestFcm = FcmRequestApiModel(email: email, tokenFcm: fcmToken!);
+
+      var resultado = await apiClient.postFcm(requestFcm);
+
+      resultado.getOrThrow();
 
       User user = User(token: loginApiModel.token, 
       refreshToken: loginApiModel.refreshToken, 

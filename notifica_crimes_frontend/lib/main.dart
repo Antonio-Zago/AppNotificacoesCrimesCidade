@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:dio/dio.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/config/dependencies.dart';
@@ -8,6 +9,8 @@ import 'package:notifica_crimes_frontend/config/interceptors/auth_redirect.dart'
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository_remote.dart';
+import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository.dart';
+import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
@@ -23,13 +26,17 @@ import 'package:notifica_crimes_frontend/ui/ocorrencia/view_model/ocorrencia_vie
 import 'package:notifica_crimes_frontend/ui/ocorrencia/widgets/ocorrencia_screen.dart';
 import 'package:notifica_crimes_frontend/ui/register/view_model/register_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/register/widgets/register_screen.dart';
+import 'package:notifica_crimes_frontend/ui/splash/view_model/splash_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/splash/widgets/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:uuid/uuid.dart';
 
-void main() {
+void main() async{
   HttpOverrides.global = MyHttpOverrides();
   WidgetsFlutterBinding.ensureInitialized();
+  await Firebase.initializeApp();
+  
   tz.initializeTimeZones();
 
   runApp(
@@ -62,10 +69,11 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(fontFamily: "Open_sans", useMaterial3: true),
       navigatorKey: globalNavigatorKey,
       routes: {
+        '/': (context) => SplashScreen(viewModel: SplashViewModel(notificationRepository: context.read<NotificationRepository>())),
         '/login': (context) => LoginScreen(viewModel: LoginViewModel(loginRepository: context.read<LoginRepository>())),
         '/register': (context) =>
             RegisterScreen(viewModel: RegisterViewModel(loginRepository: context.read<LoginRepository>())),
-        '/': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>(), storage: context.read())),
+        '/home': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>(), storage: context.read(), notificationRepository: context.read<NotificationRepository>())),
         '/ocorrencia': (context) => OcorrenciaScreen(viewModel: OcorrenciaViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
         '/choose-location-map': (context) => ChooseLocationMapScreen(viewModel: ChooseLocationMapViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid())),
         '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>()))

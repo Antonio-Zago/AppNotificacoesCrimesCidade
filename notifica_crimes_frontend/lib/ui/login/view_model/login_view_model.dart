@@ -26,7 +26,7 @@ class LoginViewModel extends ChangeNotifier {
 
         await Navigator.pushNamed(
           context,
-          "/"
+          "/home"
         );
         carregando = false;
       }

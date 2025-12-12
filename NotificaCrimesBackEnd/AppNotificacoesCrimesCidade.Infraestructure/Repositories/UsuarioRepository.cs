@@ -28,5 +28,10 @@ namespace AppNotificacoesCrimesCidade.Infraestructure.Repositories
             return await _context.Usuarios.FirstOrDefaultAsync(u => u.Nome == userName);
         }
 
+        public async Task<Usuario?> FindByFcmToken(string fcmToken)
+        {
+            return await _context.Usuarios.FirstOrDefaultAsync(u => u.FcmToken == fcmToken);
+        }
+
     }
 }

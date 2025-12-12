@@ -12,5 +12,7 @@ namespace AppNotificacoesCrimesCidade.Domain.Interfaces
         Task<Usuario?> FindByEmail(string email);
 
         Task<Usuario?> FindByUserName(string userName);
+
+        Task<Usuario?> FindByFcmToken(string fcmToken);
     }
 }

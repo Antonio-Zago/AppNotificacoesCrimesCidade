@@ -38,28 +38,77 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             _config = config;
         }
 
-        private async Task<UsuarioDto> FindByEmail(string email)
+        private async Task<Usuario> FindByEmail(string email)
         {
 
             var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(email);
             if (usuario != null)
             {
-                return _mapper.ConvertToDto(usuario);
+                return usuario;
             }
             throw new Exception($"Não encontrado usuário com o email: {email}");
 
         }
 
-        private async Task<UsuarioDto> FindByUserName(string userName)
+        private async Task<Usuario> FindByFcmToken(string fcmToken)
+        {
+            var usuario = await _unitOfWork.UsuarioRepository.FindByFcmToken(fcmToken);
+
+            return usuario;
+        }
+
+        private async Task<Usuario> FindByUserName(string userName)
         {
 
             var usuario = await _unitOfWork.UsuarioRepository.FindByUserName(userName);
+
             if (usuario != null)
             {
-                return _mapper.ConvertToDto(usuario);
+                return usuario;
             }
             throw new Exception($"Não encontrado usuário com o userName: {userName}");
 
+        }
+
+        public async Task<Result<bool>> PostFcm(UsuarioFcmForm form)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuarioComFcmToken = await FindByFcmToken(form.TokenFcm);
+
+                if (usuarioComFcmToken != null)
+                {
+                    usuarioComFcmToken.FcmToken = null;
+                    await _unitOfWork.UsuarioRepository.UpdateAsync(usuarioComFcmToken);
+                }
+            
+                var user = await FindByEmail(form.Email);
+
+                if (user is null)
+                {
+                    return Result<bool>.Failure(
+                        new ErrorDefault("Email inválido", StatusCodes.Status401Unauthorized)
+                    );
+                }
+
+                user.FcmToken = form.TokenFcm;
+
+                var entidadeAtualizada = await _unitOfWork.UsuarioRepository.UpdateAsync(user);    
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<bool>.Success(true);
+
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<bool>.Failure(new ErrorDefault(ex.Message));
+            }
         }
 
         public async Task<Result<UsuarioLoginDto>> Login(UsuarioLoginForm model)
@@ -77,11 +126,14 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     );
                 }
 
+                var sessionId = Guid.NewGuid();
+
                 var authClaims = new List<Claim>
                 {
                     new Claim(ClaimTypes.Name, user.Nome),
                     new Claim(ClaimTypes.Email, user.Email),
                     new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString()),
+                    new Claim("sessionId", sessionId.ToString()),
                 };
 
 
@@ -93,12 +145,12 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                 _ = int.TryParse(_config["JWT:RefreshTokenValidityInMinutes"],
                                    out int refreshTokenValidityInMinutes);
 
-                user.RefreshTokenExpiryTime =
-                                DateTime.Now.AddMinutes(refreshTokenValidityInMinutes);
-
                 user.RefreshToken = refreshToken;
+                user.RefreshTokenExpiryTime = DateTime.SpecifyKind(DateTime.Now.AddMinutes(refreshTokenValidityInMinutes), DateTimeKind.Local).ToUniversalTime();
 
-                await UpdateRefreshToken(user.Id, user);
+                user.SessionId = sessionId;
+
+                var entidadeAtualizada = await _unitOfWork.UsuarioRepository.UpdateAsync(user);
 
                 await _unitOfWork.CommitAsync();
 
@@ -136,6 +188,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                 string? refreshToken = tokenForm.RefreshToken
                                        ?? throw new ArgumentException(nameof(tokenForm));
 
+                var sessionId = Guid.NewGuid();
+
                 var principal = _tokenService.GetPrincipalFromExpiredToken(accessToken!, _config);
 
                 if (principal == null)
@@ -159,7 +213,9 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
                 user.RefreshToken = newRefreshToken;
 
-                await UpdateRefreshToken(user.Id, user);
+                user.SessionId = sessionId;
+
+                var entidadeAtualizada = await _unitOfWork.UsuarioRepository.UpdateAsync(user);
 
                 await _unitOfWork.CommitAsync();
 
@@ -182,25 +238,6 @@ namespace AppNotificacoesCrimesCidade.Application.Services
         private bool CheckPassword(string senhaForm, string senha)
         {
             return senhaForm.GerarHash() == senha;
-        }
-
-        private async Task<UsuarioDto?> UpdateRefreshToken(string id, UsuarioDto dto)
-        {
-            var idBanco = _hashidsPublicIdService.ToInternal(id);
-
-            var entidadeBanco = await _unitOfWork.UsuarioRepository.GetByIdAsync(idBanco.Value);
-
-            if (entidadeBanco == null)
-            {
-                return null;
-            }
-
-            entidadeBanco.RefreshToken = dto.RefreshToken;
-            entidadeBanco.RefreshTokenExpiryTime = DateTime.SpecifyKind(dto.RefreshTokenExpiryTime.Value, DateTimeKind.Local).ToUniversalTime();
-
-            var entidadeAtualizada = await _unitOfWork.UsuarioRepository.UpdateAsync(entidadeBanco);
-
-            return _mapper.ConvertToDto(entidadeAtualizada);
         }
 
         public async override Task<Result<UsuarioDto>> AddAsync(UsuarioForm form)

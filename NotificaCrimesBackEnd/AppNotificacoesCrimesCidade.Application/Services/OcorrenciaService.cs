@@ -5,11 +5,13 @@ using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
+using FirebaseAdmin.Messaging;
 using Npgsql;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AppNotificacoesCrimesCidade.Application.Services
@@ -47,6 +49,38 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
             try
             {
+
+                //var multicast = new MulticastMessage()
+                //{
+                //    Notification = new Notification
+                //    {
+                //        Title = $"Grupo: {grupo.Nome}",
+                //        Body = $"{usuario.NomeUsuario} treinou!!!"
+                //    },
+                //    Tokens = usuarios.Select(a => a.Usuario.Dispositivo.FcmToken).ToList()
+                //};
+
+                //var result = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicast);
+
+                var message = new Message()
+                {
+                    Notification = new Notification
+                    {
+                        Title = "Nova mensagem",
+                        Body = "Você recebeu uma nova notificação"
+                    },
+                    Data = new Dictionary<string, string>()
+                    {
+                        { "score", "850" },
+                        { "time", "2:45" },
+                    },
+                    Token = "",
+                };
+
+                // Send a message to the device corresponding to the provided
+                // registration token.
+                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
+
                 var ocorrencias = _query.ExecuteReader(@"SELECT 
                                         a.id AS Ocorrencia,
                                         b.id AS Assalto,

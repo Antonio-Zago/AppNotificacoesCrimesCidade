@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
+import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/domain/models/mapa/ocorrencias/ocorrencia_map.dart';
 import 'package:notifica_crimes_frontend/domain/models/place_prediction/place_prediction.dart';
@@ -11,17 +12,19 @@ import 'package:uuid/uuid.dart';
 import 'package:timezone/timezone.dart' as tz;
 
 class HomeViewModel extends ChangeNotifier {
-  HomeViewModel( {
+  HomeViewModel(  {
     required this.mapRepository,
     required this.uuid,
     required this.ocorrenciaRepository,
     required this.storage,
+    required this.notificationRepository,
   });
 
   final MapRepository mapRepository;
   final OcorrenciaRepository ocorrenciaRepository;
   final Uuid uuid;
   final FlutterSecureStorage storage;
+  final NotificationRepository notificationRepository;
 
   bool digitando = false;
   String sessionId = "";
@@ -33,6 +36,7 @@ class HomeViewModel extends ChangeNotifier {
   List<OcorrenciaMap> ocorrencias = [];
   String valorSelecionado = "ano";
   bool estaLogado = false;
+
 
   Future<void> initState() async {
     try {
@@ -371,6 +375,5 @@ class HomeViewModel extends ChangeNotifier {
 
     await storage.delete(key: "token");
     await storage.delete(key: "refresh_token");
-  
   }
 }

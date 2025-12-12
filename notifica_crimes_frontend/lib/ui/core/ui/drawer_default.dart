@@ -62,7 +62,7 @@ class _DrawerDefaultState extends State<DrawerDefault> {
                 onTap: () {
                   Navigator.of(
                     context,
-                  ).pushNamedAndRemoveUntil('/', (_) => false);
+                  ).pushNamedAndRemoveUntil('/home', (_) => false);
                 },
               ),
 
@@ -141,7 +141,7 @@ class _DrawerDefaultState extends State<DrawerDefault> {
 
                   Navigator.of(
                     context,
-                  ).pushNamedAndRemoveUntil('/', (_) => false);
+                  ).pushNamedAndRemoveUntil('/home', (_) => false);
                 },
               ),
             ],

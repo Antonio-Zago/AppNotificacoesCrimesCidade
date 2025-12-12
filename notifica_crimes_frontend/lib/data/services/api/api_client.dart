@@ -2,6 +2,7 @@ import 'package:dio/dio.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/fcm_request/fcm_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_response/login_response_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
@@ -238,6 +239,22 @@ class ApiClient {
       );
 
       return Success(LoginResponseApiModel.fromJson(retorno.data));
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> postFcm(FcmRequestApiModel request) async {
+    try {
+
+      await dio.post(
+        '${ApiRoutes.urlBase}/usuario/postFcm',
+        data: request.toJson(),
+      );
+
+      return Success(true);
     } on DioException catch (exception) {
       return Failure(_handleDioError(exception));
     }on Exception catch (exception) {
