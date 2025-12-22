@@ -50,37 +50,6 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             try
             {
 
-                //var multicast = new MulticastMessage()
-                //{
-                //    Notification = new Notification
-                //    {
-                //        Title = $"Grupo: {grupo.Nome}",
-                //        Body = $"{usuario.NomeUsuario} treinou!!!"
-                //    },
-                //    Tokens = usuarios.Select(a => a.Usuario.Dispositivo.FcmToken).ToList()
-                //};
-
-                //var result = await FirebaseMessaging.DefaultInstance.SendEachForMulticastAsync(multicast);
-
-                var message = new Message()
-                {
-                    Notification = new Notification
-                    {
-                        Title = "Nova mensagem",
-                        Body = "Você recebeu uma nova notificação"
-                    },
-                    Data = new Dictionary<string, string>()
-                    {
-                        { "score", "850" },
-                        { "time", "2:45" },
-                    },
-                    Token = "",
-                };
-
-                // Send a message to the device corresponding to the provided
-                // registration token.
-                string response = await FirebaseMessaging.DefaultInstance.SendAsync(message);
-
                 var ocorrencias = _query.ExecuteReader(@"SELECT 
                                         a.id AS Ocorrencia,
                                         b.id AS Assalto,
@@ -94,7 +63,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                                             WHEN c.id IS NOT NULL THEN 'ROUBO'
                                             WHEN d.id IS NOT NULL THEN 'AGRESSAO'
                                             ELSE 'DESCONHECIDO'
-                                        END AS Tipo
+                                        END AS Tipo,
+                                        a.id_usuario
                                     FROM ocorrencias a
                                     LEFT JOIN assaltos b ON a.id = b.id_ocorrencia
                                     LEFT JOIN roubos c ON a.id = c.id_ocorrencia
@@ -163,6 +133,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
                     var idLocalizacaoPublic = _hashidsPublicIdService.ToPublic((int)ocorrencia["id_localizacao"]);
 
+                    var idUsuarioPublic = _hashidsPublicIdService.ToPublic((int)ocorrencia["id_usuario"]);
+
                     var dtoLocalizacao = await _localizacaoService.GetByIdAsync(idLocalizacaoPublic);
 
                     var resultDtoLocalizacao = dtoLocalizacao.Map(
@@ -178,7 +150,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                             Agressao = agressaoDto,
                             Assalto = assaltoDto,
                             Roubo = rouboDto,
-                            Localizacao = resultDtoLocalizacao
+                            Localizacao = resultDtoLocalizacao,
+                            UsuarioId = idUsuarioPublic
                     };
 
                     dtos.Add(dto);

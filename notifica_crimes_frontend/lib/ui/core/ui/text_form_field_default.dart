@@ -2,10 +2,11 @@ import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 
 class TextFormFieldDefault extends StatefulWidget {
-  const TextFormFieldDefault({super.key, required this.controller, required this.mensagemValidacao});
+  const TextFormFieldDefault({super.key, required this.controller, required this.mensagemValidacao, required this.label});
 
   final TextEditingController controller;
   final String mensagemValidacao;
+  final String label;
 
   @override
   State<TextFormFieldDefault> createState() => _TextFormFieldDefaultState();
@@ -22,7 +23,7 @@ class _TextFormFieldDefaultState extends State<TextFormFieldDefault> {
             width: double.infinity,
             child: Text(
               style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              "Quantidade de agressores",
+              widget.label,
             ),
           ),
         ),

@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
@@ -9,10 +10,11 @@ import 'package:result_dart/result_dart.dart';
 
 class LoginRepositoryRemote implements LoginRepository{
 
-  LoginRepositoryRemote( {required this.apiClient,required this.storage,});
+  LoginRepositoryRemote(  {required this.apiClient,required this.storage, required this.firebaseMessaging,});
   
   final ApiClient apiClient;
   final FlutterSecureStorage storage;
+  final FirebaseMessaging firebaseMessaging;
 
   @override
   Future<Result<User>> login(String email, String senha) async{
@@ -30,18 +32,27 @@ class LoginRepositoryRemote implements LoginRepository{
       await storage.write(key: 'email', value: loginApiModel.email);
       await storage.write(key: 'usuario', value: loginApiModel.usuario);
 
-      var fcmToken = await storage.read(key: 'fcm');
-
-      var requestFcm = FcmRequestApiModel(email: email, tokenFcm: fcmToken!);
-
-      var resultado = await apiClient.postFcm(requestFcm);
-
-      resultado.getOrThrow();
-
       User user = User(token: loginApiModel.token, 
       refreshToken: loginApiModel.refreshToken, 
       expiration: loginApiModel.expiration, 
       nome: loginApiModel.usuario, email: loginApiModel.email);
+
+      NotificationSettings permission = await firebaseMessaging
+          .requestPermission();
+
+      if (permission.authorizationStatus == AuthorizationStatus.denied) {
+        return Success(user);
+      }
+
+      final fcm = await firebaseMessaging.getToken();
+
+      await storage.write(key: 'fcm', value: fcm);
+
+      var requestFcm = FcmRequestApiModel(email: email, tokenFcm: fcm!);
+
+      var resultado = await apiClient.postFcm(requestFcm);
+
+      resultado.getOrThrow();
 
       return Success(user);
     } on Exception catch (exception) {

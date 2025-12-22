@@ -22,11 +22,14 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
         private readonly IHashidsPublicIdService _hashidsPublicIdService;
 
-        public RouboService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Roubo, RouboDto, RouboForm> mapper) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
+        private readonly ILocalService _localService;
+
+        public RouboService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Roubo, RouboDto, RouboForm> mapper, ILocalService localService) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _hashidsPublicIdService = hashidsPublicIdService;
+            _localService = localService;
         }
 
         public async override Task<Result<RouboDto>> AddAsync(RouboForm form)
@@ -46,12 +49,19 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     Coordenadas = new Point(form.Ocorrencia.Localizacao.Longitude, form.Ocorrencia.Localizacao.Latitude) { SRID = 4326 }
                 };
 
+                var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(form.Ocorrencia.Email);
+                if (usuario == null)
+                {
+                    throw new Exception($"Não encontrado usuário com o email: {form.Ocorrencia.Email}");
+                }
+
                 var ocorrencia = new Ocorrencia()
                 {
                     Descricao = form.Ocorrencia.Descricao,
                     //Aqui eu recebo o valor local (brasil) e converto para UTC para armazenar no banco de dados
                     DataHora = DateTime.SpecifyKind(form.Ocorrencia.DataHora, DateTimeKind.Local).ToUniversalTime(),
-                    Localizacao = localizacaoOcorrencia
+                    Localizacao = localizacaoOcorrencia,
+                    UsuarioId = usuario.Id,
                 };
 
 
@@ -83,6 +93,13 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                 };
 
                 var rouboSalvo = await _unitOfWork.RouboRepository.AddAsync(roubo);
+
+                var resultadoEnvioNotificacoes = await _localService.EnviarNotificacoes(form.Ocorrencia.Localizacao.Latitude, form.Ocorrencia.Localizacao.Longitude, usuario.Id);
+
+                resultadoEnvioNotificacoes.Map<bool>(
+                    onSuccess: resultadoEnvioNotificacoes => true,
+                    onFailure: resultadoEnvioNotificacoes => throw new Exception("Erro no envio das notificações")
+                );
 
                 await _unitOfWork.CommitAsync();
 

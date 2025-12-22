@@ -22,6 +22,8 @@ namespace AppNotificacoesCrimesCidade.Domain.Interfaces
         IRouboRepository RouboRepository { get; }
 
         IUsuarioRepository UsuarioRepository { get; }
+
+        ILocalRepository LocalRepository { get; }
         Task<int> CommitAsync();
 
         Task BeginTransactionAsync();

@@ -38,6 +38,7 @@ builder.Services.AddScoped<IUsuarioService, UsuarioService>();
 builder.Services.AddScoped<IHashidsPublicIdService, HashidsPublicIdService>();
 builder.Services.AddScoped<IRouboService, RouboService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
+builder.Services.AddScoped<ILocalService, LocalService>();
 builder.Services.AddScoped(typeof(IMapperBase<,,>), typeof(MapperBase<,,>));
 builder.Services.AddTransient<IQuery, Query>();
 

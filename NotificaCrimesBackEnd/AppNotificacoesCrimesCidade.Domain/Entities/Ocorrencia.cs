@@ -22,5 +22,10 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
         public int LocalizacaoId { get; set; }
 
         public LocalizacaoOcorrencia Localizacao { get; set; }
+
+        [Column("id_usuario")]
+        public int UsuarioId { get; set; }
+
+        public Usuario Usuario { get; set; }
     }
 }

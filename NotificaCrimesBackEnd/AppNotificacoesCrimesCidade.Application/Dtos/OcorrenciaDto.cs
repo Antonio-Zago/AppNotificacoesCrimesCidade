@@ -24,5 +24,7 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public RouboDto? Roubo { get; set; }
 
+        public string UsuarioId { get; set; }
+
     }
 }

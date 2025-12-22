@@ -100,7 +100,9 @@ class _DrawerDefaultState extends State<DrawerDefault> {
                   size: 35,
                 ),
 
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, '/locais');
+                },
               ),
               ListTile(
                 title: Text(

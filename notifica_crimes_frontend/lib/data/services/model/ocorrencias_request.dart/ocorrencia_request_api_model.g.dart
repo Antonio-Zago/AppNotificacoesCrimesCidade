@@ -14,6 +14,7 @@ OcorrenciaRequestApiModel _$OcorrenciaRequestApiModelFromJson(
   localizacao: LocalizacaoOcorrenciaRequestApiModel.fromJson(
     json['localizacao'] as Map<String, dynamic>,
   ),
+  email: json['email'] as String,
 );
 
 Map<String, dynamic> _$OcorrenciaRequestApiModelToJson(
@@ -22,4 +23,5 @@ Map<String, dynamic> _$OcorrenciaRequestApiModelToJson(
   'descricao': instance.descricao,
   'dataHora': instance.dataHora.toIso8601String(),
   'localizacao': instance.localizacao,
+  'email': instance.email,
 };

@@ -3,9 +3,11 @@ import 'dart:io';
 import 'package:dio/dio.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/config/dependencies.dart';
 import 'package:notifica_crimes_frontend/config/interceptors/auth_redirect.dart';
+import 'package:notifica_crimes_frontend/data/repositories/locais/local_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository_remote.dart';
@@ -18,19 +20,34 @@ import 'package:notifica_crimes_frontend/ui/choose_bens/view_model/choose_bens_v
 import 'package:notifica_crimes_frontend/ui/choose_bens/widgets/choose_bens_screen.dart';
 import 'package:notifica_crimes_frontend/ui/choose_location_map/view_model/choose_location_map_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/choose_location_map/widgets/choose_location_map_screen.dart';
+import 'package:notifica_crimes_frontend/ui/edit_local/view_model/edit_local_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/edit_local/widgets/edit_local_screen.dart';
 import 'package:notifica_crimes_frontend/ui/home/view_model/home_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/home/widgets/home_screen.dart';
+import 'package:notifica_crimes_frontend/ui/locais/view_model/locais_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/locais/widgets/locais_screen.dart';
 import 'package:notifica_crimes_frontend/ui/login/view_model/login_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/login/widgets/login_screen.dart';
 import 'package:notifica_crimes_frontend/ui/ocorrencia/view_model/ocorrencia_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/ocorrencia/widgets/ocorrencia_screen.dart';
 import 'package:notifica_crimes_frontend/ui/register/view_model/register_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/register/widgets/register_screen.dart';
+import 'package:notifica_crimes_frontend/ui/register_local/view_model/register_local_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/register_local/widgets/register_local_screen.dart';
 import 'package:notifica_crimes_frontend/ui/splash/view_model/splash_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/splash/widgets/splash_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:uuid/uuid.dart';
+
+
+
+const AndroidNotificationChannel channel = AndroidNotificationChannel(
+  'high_importance_channel',
+  'Notificações Importantes',
+  description: 'Canal para notificações em foreground',
+  importance: Importance.high,
+);
 
 void main() async{
   HttpOverrides.global = MyHttpOverrides();
@@ -76,7 +93,10 @@ class MyApp extends StatelessWidget {
         '/home': (context) => HomeScreen(viewModel: HomeViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid(), ocorrenciaRepository: context.read<OcorrenciaRepository>(), storage: context.read(), notificationRepository: context.read<NotificationRepository>())),
         '/ocorrencia': (context) => OcorrenciaScreen(viewModel: OcorrenciaViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
         '/choose-location-map': (context) => ChooseLocationMapScreen(viewModel: ChooseLocationMapViewModel(mapRepository: context.read<MapRepository>(), uuid: Uuid())),
-        '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>()))
+        '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
+        '/locais': (context) => LocaisScreen(viewModel: LocaisViewModel(localRepository: context.read<LocalRepository>())),
+        '/new-local': (context) => RegisterLocalScreen(viewModel: RegisterLocalViewModel(localRepository:  context.read<LocalRepository>())),
+        '/edit-local': (context) => EditLocalScreen(viewModel: EditLocalViewModel(localRepository:  context.read<LocalRepository>()))
       },
     );
   }

@@ -1,3 +1,4 @@
+import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/data/repositories/ocorrencias/ocorrencia_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
 import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
@@ -19,9 +20,10 @@ import 'package:result_dart/result_dart.dart';
 import 'package:result_dart/src/types.dart';
 
 class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
-  OcorrenciaRepositoryRemote({required this.apiClient});
+  OcorrenciaRepositoryRemote( {required this.apiClient, required this.storage,});
 
   final ApiClient apiClient;
+  final FlutterSecureStorage storage;
 
   @override
   Future<Result<List<Armas>>> findAllArmas() async {
@@ -66,6 +68,9 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
   @override
   Future<Result<void>> postAssalto(Assalto assalto) async {
     try {
+
+      var email = await storage.read(key: 'email');
+
       //Aqui vou retirar cep, cidade, etc
       var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
         assalto.ocorrencia.localizacao.cep,
@@ -81,6 +86,7 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
         descricao: assalto.ocorrencia.descricao,
         dataHora: assalto.ocorrencia.dataHora,
         localizacao: localizacaoRequest,
+        email: email!
       );
 
       var request = AssaltoRequestApiModel(
@@ -105,6 +111,8 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
   @override
   Future<Result<void>> postRoubo(Roubo roubo) async {
     try {
+
+      var email = await storage.read(key: 'email');
       //Aqui vou retirar cep, cidade, etc
       var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
         roubo.ocorrencia.localizacao.cep,
@@ -120,6 +128,7 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
         descricao: roubo.ocorrencia.descricao,
         dataHora: roubo.ocorrencia.dataHora,
         localizacao: localizacaoRequest,
+        email: email!
       );
 
       var request = RouboRequestApiModel(
@@ -141,6 +150,7 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
   @override
   Future<Result<void>> postAgressao(Agressao agressao) async {
     try {
+      var email = await storage.read(key: 'email');
       //Aqui vou retirar cep, cidade, etc
       var localizacaoRequest = LocalizacaoOcorrenciaRequestApiModel(
         agressao.ocorrencia.localizacao.cep,
@@ -156,6 +166,7 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
         descricao: agressao.ocorrencia.descricao,
         dataHora: agressao.ocorrencia.dataHora,
         localizacao: localizacaoRequest,
+        email: email!
       );
 
       var request = AgressaoRequestApiModel(

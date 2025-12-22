@@ -7,11 +7,12 @@ part 'ocorrencia_request_api_model.g.dart';
 @JsonSerializable()
 class OcorrenciaRequestApiModel {
 
-  OcorrenciaRequestApiModel({required this.descricao, required this.dataHora, required this.localizacao   });
+  OcorrenciaRequestApiModel({required this.descricao, required this.dataHora, required this.localizacao, required this.email   });
 
   final String descricao;
   final DateTime dataHora;
   final LocalizacaoOcorrenciaRequestApiModel localizacao;
+  final String email;
   
   Map<String, dynamic> toJson() => _$OcorrenciaRequestApiModelToJson(this);
 

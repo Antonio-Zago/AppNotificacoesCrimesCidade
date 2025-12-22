@@ -1,3 +1,4 @@
 NotificaCrimesBackEnd/NotificaCrimesBackEnd/appsettings.json
 db/flyway.conf
 NotificaCrimesBackEnd/NotificaCrimesBackEnd/secrets/key.json
+notifica_crimes_frontend/.vscode/launch.json

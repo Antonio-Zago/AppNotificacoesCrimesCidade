@@ -4,10 +4,9 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/config/interceptors/auth_redirect.dart';
 
-class AuthInterceptor extends Interceptor{
-
+class AuthInterceptor extends Interceptor {
   AuthInterceptor({required this.storage, required this.dio});
-  
+
   final FlutterSecureStorage storage;
   final Dio dio;
 
@@ -15,14 +14,20 @@ class AuthInterceptor extends Interceptor{
   List<Function(String)> _queuedRequests = [];
 
   @override
-  void onRequest(RequestOptions options, RequestInterceptorHandler handler) async {
+  void onRequest(
+    RequestOptions options,
+    RequestInterceptorHandler handler,
+  ) async {
+    final skipAuth = options.extra['skipAuth'] == true;
 
-    var token = await storage.read(key: 'token');
+    if (!skipAuth) {
+      var token = await storage.read(key: 'token');
 
-    if(token != null){
-      options.headers.addAll({'Authorization': 'Bearer $token'});
-      
+      if (token != null) {
+        options.headers.addAll({'Authorization': 'Bearer $token'});
+      }
     }
+
     handler.next(options);
   }
 
@@ -55,10 +60,10 @@ class AuthInterceptor extends Interceptor{
 
     try {
       // ⬇️ Chamada ao endpoint de refresh
-      final response = await dio.post('${ApiRoutes.urlBase}/auth/refresh-token', data: {
-        'RefreshToken': refreshToken,
-        'AccessToken' : accessToken
-      });
+      final response = await dio.post(
+        '${ApiRoutes.urlBase}/auth/refresh-token',
+        data: {'RefreshToken': refreshToken, 'AccessToken': accessToken},
+      );
 
       final newToken = response.data['token'];
       final newRefresh = response.data['refreshToken'];
@@ -92,13 +97,13 @@ class AuthInterceptor extends Interceptor{
   }
 
   // Função para reenviar a requisição
-  Future<Response<dynamic>> _retry(RequestOptions requestOptions, String newToken) async {
+  Future<Response<dynamic>> _retry(
+    RequestOptions requestOptions,
+    String newToken,
+  ) async {
     final options = Options(
       method: requestOptions.method,
-      headers: {
-        ...requestOptions.headers,
-        'Authorization': 'Bearer $newToken',
-      },
+      headers: {...requestOptions.headers, 'Authorization': 'Bearer $newToken'},
     );
 
     return dio.request(

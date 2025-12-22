@@ -3,6 +3,8 @@ import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/fcm_request/fcm_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/local_request/local_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/local_response/local_response_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_response/login_response_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
@@ -35,6 +37,7 @@ class ApiClient {
             "Content-Type": "application/json",
             "X-Goog-Api-Key": "",
           },
+          extra: {'skipAuth': true},
         ),
       );
 
@@ -177,6 +180,7 @@ class ApiClient {
             "X-Goog-Api-Key": "",
             "X-Goog-FieldMask": "id,displayName,location",
           },
+          extra: {'skipAuth': true},
         ),
       );
 
@@ -268,6 +272,76 @@ class ApiClient {
       await dio.post(
         '${ApiRoutes.urlBase}/auth/register',
         data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<List<LocalResponseApiModel>>> getLocais(String email) async {
+    try {
+      
+      List<LocalResponseApiModel> listaLocaisApi = [];
+
+      var locaisRetorno = await dio.get(
+        '${ApiRoutes.urlBase}/Local/by-email/$email',
+      );
+
+      for(var localRetorno in locaisRetorno.data){
+        var local = LocalResponseApiModel.fromJson(localRetorno);
+
+        listaLocaisApi.add(local);
+      }
+
+      return Success(listaLocaisApi);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<LocalResponseApiModel>> postLocal(LocalRequestApiModel request) async {
+    try {
+
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/Local',
+        data: request.toJson(),
+      );
+
+      return Success(LocalResponseApiModel.fromJson(retorno.data));
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<LocalResponseApiModel>> putLocal(LocalRequestApiModel request,  String idLocal) async {
+    try {
+
+      var retorno = await dio.put(
+        '${ApiRoutes.urlBase}/Local/$idLocal',
+        data: request.toJson(),
+      );
+
+      return Success(LocalResponseApiModel.fromJson(retorno.data));
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> deleteLocal(String idLocal) async {
+    try {
+
+      await dio.delete(
+        '${ApiRoutes.urlBase}/Local/$idLocal',
       );
 
       return Success(true);

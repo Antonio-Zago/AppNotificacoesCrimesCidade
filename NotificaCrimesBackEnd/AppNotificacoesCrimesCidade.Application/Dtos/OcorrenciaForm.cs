@@ -16,6 +16,6 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
 
         public LocalizacaoOcorrenciaForm Localizacao { get; set; }
 
-
+        public string Email { get; set; }
     }
 }

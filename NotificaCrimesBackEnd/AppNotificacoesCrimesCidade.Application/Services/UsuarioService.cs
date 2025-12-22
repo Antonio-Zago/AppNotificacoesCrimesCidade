@@ -162,7 +162,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     RefreshToken = refreshToken,
                     Expiration = token.ValidTo,
                     Usuario = user.Nome,
-                    Email = user.Email
+                    Email = user.Email,
                 });
                 
                 throw new Exception($"Não encontrado usuário");

@@ -13,8 +13,6 @@ class SplashViewModel extends ChangeNotifier{
   Future<void> initState() async {
     try {
 
-      await Future.delayed(Duration(seconds: 5));
-
       await notificationRepository.initFcm();
 
     } on Exception catch (exception) {

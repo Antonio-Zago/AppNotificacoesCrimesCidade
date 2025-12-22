@@ -138,6 +138,7 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                                     widget.viewModel.numeroAgressoresController,
                                 mensagemValidacao:
                                     "Necessário preencher a quantidade de agressores",
+                                label: "Quantidade de agressores",
                               ),
 
                             if (widget.viewModel.tipo != null &&
