@@ -32,5 +32,8 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
 
         [Column("fcmtoken")]
         public string? FcmToken { get; set; }
+
+        [Column("foto")]
+        public byte[]? Foto { get; set; }
     }
 }

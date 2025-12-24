@@ -32,5 +32,48 @@ namespace NotificaCrimesBackEnd.Controllers
                 }
                );
         }
+
+        [HttpPut]
+        [Route("updateConfiguracoes")]
+        public async Task<ActionResult<bool>> UpdateConfiguracoes([FromBody] UsuarioConfiguracaoForm model)
+        {
+            var user = await _usuarioService.UpdateConfiguracoesAsync(model);
+
+            return user.Map<ActionResult>(
+                onSuccess: user => Ok(user),
+                onFailure: err =>
+                {
+                    return BadRequest(err);
+                }
+               );
+        }
+
+        [HttpGet("getConfiguracoes/{email}")]
+        public async Task<ActionResult<UsuarioConfiguracoesDto>> UpdateConfiguracoes(string email)
+        {
+            var user = await _usuarioService.FindConfiguracoesByEmailAsync(email);
+
+            return user.Map<ActionResult>(
+                onSuccess: user => Ok(user),
+                onFailure: err =>
+                {
+                    return BadRequest(err);
+                }
+               );
+        }
+
+        [HttpPut]
+        public async Task<ActionResult<bool>> Update([FromBody] UsuarioForm model)
+        {
+            var user = await _usuarioService.UpdateUsuario(model);
+
+            return user.Map<ActionResult>(
+                onSuccess: user => Ok(user),
+                onFailure: err =>
+                {
+                    return BadRequest(err);
+                }
+               );
+        }
     }
 }

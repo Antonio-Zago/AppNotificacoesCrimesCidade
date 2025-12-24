@@ -35,9 +35,7 @@ class _HomeScreenState extends State<HomeScreen> {
         });
       }
     });
-    Future.microtask(() async {
-      await widget.viewModel.initState();
-    });
+    widget.viewModel.initState();
   }
 
   @override
@@ -59,7 +57,13 @@ class _HomeScreenState extends State<HomeScreen> {
 
         return Scaffold(
           key: _scaffoldKey,
-          drawer: DrawerDefault(estaLogado: widget.viewModel.estaLogado, sair: widget.viewModel.sair,),
+          drawer: DrawerDefault(
+            estaLogado: widget.viewModel.estaLogado, 
+            sair: widget.viewModel.sair, 
+            emailUsuario: widget.viewModel.emailUsuario,
+            nomeUsuario: widget.viewModel.nomeUsuario, 
+            fotoBase64: widget.viewModel.foto,
+          ),
           body: ListenableBuilder(
             listenable: widget.viewModel,
             builder: (BuildContext context, _) {

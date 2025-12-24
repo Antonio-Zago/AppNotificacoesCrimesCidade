@@ -53,7 +53,7 @@ class AuthInterceptor extends Interceptor {
       _queuedRequests.add((newToken) {
         err.requestOptions.headers['Authorization'] = 'Bearer $newToken';
       });
-      return;
+      return handler.next(err);
     }
 
     _isRefreshing = true;

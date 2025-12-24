@@ -1,11 +1,17 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 
 class DrawerDefault extends StatefulWidget {
-  const DrawerDefault({super.key, required this.estaLogado, required this.sair});
+  const DrawerDefault({super.key, required this.estaLogado, required this.sair, required this.nomeUsuario, required this.emailUsuario, required this.fotoBase64});
 
   final bool estaLogado;
   final Future<void> Function() sair;
+  final String nomeUsuario;
+  final String emailUsuario;
+  final String fotoBase64;
 
   @override
   State<DrawerDefault> createState() => _DrawerDefaultState();
@@ -32,15 +38,20 @@ class _DrawerDefaultState extends State<DrawerDefault> {
                   color: Color(ColorsConstants.azulPadraoApp),
                 ),
                 accountName: Text(
-                  "Nome usuário",
+                  widget.nomeUsuario,
                   style: TextStyle(fontWeight: FontWeight.bold),
                 ),
-                accountEmail: Text("Email usuário"),
+                accountEmail: Text(widget.emailUsuario),
                 currentAccountPicture: CircleAvatar(
                   radius: 30.0,
-                  backgroundImage: AssetImage(
-                    "assets/images/perfil_exemplo.png",
-                  ),
+                  backgroundImage: 
+                  widget.fotoBase64.isEmpty ?
+                  AssetImage(
+                    "assets/images/perfil_exemplo.png"
+                  ) :
+                  MemoryImage(
+                    base64ToBytes(widget.fotoBase64),
+                  )
                 ),
               ),
 
@@ -119,7 +130,9 @@ class _DrawerDefaultState extends State<DrawerDefault> {
                   size: 35,
                 ),
 
-                onTap: () {},
+                onTap: () {
+                  Navigator.pushNamed(context, '/configuracoes');
+                },
               ),
 
               ListTile(
@@ -195,5 +208,9 @@ class _DrawerDefaultState extends State<DrawerDefault> {
         ),
       ),
     );
+  }
+
+  Uint8List base64ToBytes(String base64) {
+    return base64Decode(base64.split(',').last);
   }
 }

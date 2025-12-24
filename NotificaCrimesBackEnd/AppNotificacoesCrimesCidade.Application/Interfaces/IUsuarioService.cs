@@ -17,5 +17,11 @@ namespace AppNotificacoesCrimesCidade.Application.Interfaces
 
         Task<Result<bool>> PostFcm(UsuarioFcmForm form);
 
+        Task<Result<bool>> UpdateConfiguracoesAsync(UsuarioConfiguracaoForm form);
+
+        Task<Result<UsuarioConfiguracoesDto>> FindConfiguracoesByEmailAsync(string email);
+
+        Task<Result<bool>> UpdateUsuario(UsuarioForm form);
+
     }
 }

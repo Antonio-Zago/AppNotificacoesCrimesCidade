@@ -5,6 +5,8 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/config/interceptors/auth_interceptor.dart';
+import 'package:notifica_crimes_frontend/data/repositories/configuracoes/configuracoes_repository.dart';
+import 'package:notifica_crimes_frontend/data/repositories/configuracoes/configuracoes_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/locais/local_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/locais/local_repository_remote.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
@@ -59,6 +61,11 @@ List<SingleChildWidget> get providersRemote {
       create: (context) =>
           LocalRepositoryRemote(apiClient: context.read(), storage:  context.read())
               as LocalRepository,
+    ),
+     Provider(
+      create: (context) =>
+          ConfiguracoesRepositoryRemote(storage: context.read(), apiClient: context.read())
+              as ConfiguracoesRepository,
     ),
   ];
 }

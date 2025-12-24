@@ -8,6 +8,7 @@ using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
+using Microsoft.IdentityModel.Tokens;
 using System;
 using System.Collections.Generic;
 using System.IdentityModel.Tokens.Jwt;
@@ -163,6 +164,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     Expiration = token.ValidTo,
                     Usuario = user.Nome,
                     Email = user.Email,
+                    Foto = user.Foto
                 });
                 
                 throw new Exception($"Não encontrado usuário");
@@ -246,14 +248,33 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             {
                 await _unitOfWork.BeginTransactionAsync();
 
+                byte[] fotoBytes = null;
+
+                if (!form.Foto.IsNullOrEmpty())
+                {
+                    fotoBytes = Convert.FromBase64String(form.Foto);
+                }
+
                 var usuario = new Usuario()
                 {
                     Email = form.Email,
                     Nome = form.Nome,
-                    Senha = form.Senha.GerarHash()
+                    Senha = form.Senha.GerarHash(),
+                    Foto = fotoBytes,
                 };
 
                 var entidadeSalva = await _unitOfWork.UsuarioRepository.AddAsync(usuario);
+
+                var usuarioConfiguracoes = new UsuarioConfiguracoes()
+                {
+                    NotificaLocal = true,
+                    NotificaLocalizacao = true,
+                    DistanciaLocal = 3000,
+                    DistanciaLocalizacao = 3000,
+                    Usuario = entidadeSalva
+                };
+
+                var entidadeConfiguracoesSalva = await _unitOfWork.UsuarioConfiguracoesRepository.AddAsync(usuarioConfiguracoes);
 
                 var dto = _mapper.ConvertToDto(entidadeSalva);
 
@@ -267,6 +288,105 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             {
                 await _unitOfWork.RoolbackTransactionAsync();
                 return Result<UsuarioDto>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+
+        public async Task<Result<bool>> UpdateConfiguracoesAsync(UsuarioConfiguracaoForm form)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuario = await _unitOfWork.UsuarioConfiguracoesRepository.FindByEmail(form.Email);
+
+                if (usuario == null)
+                {
+                    throw new Exception("Configurações não encontradas para o usuário");
+                }
+
+                usuario.NotificaLocal = form.NotificaLocal;
+                usuario.NotificaLocalizacao = form.NotificaLocalizacao;
+                usuario.DistanciaLocal = form.DistanciaLocal;
+                usuario.DistanciaLocalizacao = form.DistanciaLocalizacao;
+
+                var entidadeConfiguracoesSalva = await _unitOfWork.UsuarioConfiguracoesRepository.UpdateAsync(usuario);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<bool>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+
+        public async Task<Result<UsuarioConfiguracoesDto>> FindConfiguracoesByEmailAsync(string email)
+        {
+            try
+            {
+                var usuario = await _unitOfWork.UsuarioConfiguracoesRepository.FindByEmail(email);
+
+                if (usuario == null)
+                {
+                    throw new Exception("Configurações não encontradas para o usuário");
+                }
+
+                var usuarioConfiguracoes = new UsuarioConfiguracoesDto()
+                {
+                    NotificaLocal = usuario.NotificaLocal,
+                    NotificaLocalizacao = usuario.NotificaLocalizacao,
+                    DistanciaLocal = usuario.DistanciaLocal,
+                    DistanciaLocalizacao = usuario.DistanciaLocalizacao
+                };       
+
+                return Result<UsuarioConfiguracoesDto>.Success(usuarioConfiguracoes);
+            }
+            catch (Exception ex)
+            {
+                return Result<UsuarioConfiguracoesDto>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+
+        public async Task<Result<bool>> UpdateUsuario(UsuarioForm form)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(form.Email);
+
+                if (usuario == null)
+                {
+                    throw new Exception("Usuário não encontrado");
+                }
+
+
+                byte[] fotoBytes = null;
+
+                if (!form.Foto.IsNullOrEmpty())
+                {
+                    fotoBytes = Convert.FromBase64String(form.Foto);
+                }
+
+                usuario.Nome = form.Nome;
+                usuario.Foto = fotoBytes;
+
+                var entidadeConfiguracoesSalva = await _unitOfWork.UsuarioRepository.UpdateAsync(usuario);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<bool>.Failure(new ErrorDefault(ex.Message));
             }
         }
     }

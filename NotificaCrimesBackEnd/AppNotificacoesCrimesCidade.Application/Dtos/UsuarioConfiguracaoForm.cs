@@ -7,14 +7,16 @@ using System.Threading.Tasks;
 
 namespace AppNotificacoesCrimesCidade.Application.Dtos
 {
-    public class UsuarioForm
+    public class UsuarioConfiguracaoForm
     {
-        public string Nome { get; set; }
-
         public string Email { get; set; }
 
-        public string? Senha { get; set; }
+        public bool NotificaLocalizacao { get; set; }
 
-        public string? Foto { get; set; }
+        public bool NotificaLocal { get; set; }
+
+        public double DistanciaLocalizacao { get; set; }
+
+        public double DistanciaLocal { get; set; }
     }
 }

@@ -7,6 +7,7 @@ import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/config/dependencies.dart';
 import 'package:notifica_crimes_frontend/config/interceptors/auth_redirect.dart';
+import 'package:notifica_crimes_frontend/data/repositories/configuracoes/configuracoes_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/locais/local_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
@@ -20,8 +21,12 @@ import 'package:notifica_crimes_frontend/ui/choose_bens/view_model/choose_bens_v
 import 'package:notifica_crimes_frontend/ui/choose_bens/widgets/choose_bens_screen.dart';
 import 'package:notifica_crimes_frontend/ui/choose_location_map/view_model/choose_location_map_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/choose_location_map/widgets/choose_location_map_screen.dart';
+import 'package:notifica_crimes_frontend/ui/configuracoes/view_model/configuracoes_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/configuracoes/widgets/configuracoes_screen.dart';
 import 'package:notifica_crimes_frontend/ui/edit_local/view_model/edit_local_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/edit_local/widgets/edit_local_screen.dart';
+import 'package:notifica_crimes_frontend/ui/edit_usuario/view_model/edit_usuario_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/edit_usuario/widgets/edit_usuario_screen.dart';
 import 'package:notifica_crimes_frontend/ui/home/view_model/home_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/home/widgets/home_screen.dart';
 import 'package:notifica_crimes_frontend/ui/locais/view_model/locais_view_model.dart';
@@ -96,7 +101,9 @@ class MyApp extends StatelessWidget {
         '/choose-bens': (context) => ChooseBensScreen(viewModel: ChooseBensViewModel(ocorrenciaRepository: context.read<OcorrenciaRepository>())),
         '/locais': (context) => LocaisScreen(viewModel: LocaisViewModel(localRepository: context.read<LocalRepository>())),
         '/new-local': (context) => RegisterLocalScreen(viewModel: RegisterLocalViewModel(localRepository:  context.read<LocalRepository>())),
-        '/edit-local': (context) => EditLocalScreen(viewModel: EditLocalViewModel(localRepository:  context.read<LocalRepository>()))
+        '/edit-local': (context) => EditLocalScreen(viewModel: EditLocalViewModel(localRepository:  context.read<LocalRepository>())),
+        '/configuracoes': (context) => ConfiguracoesScreen(viewModel: ConfiguracoesViewModel(configuracoesRepository: context.read<ConfiguracoesRepository>())),
+        '/edit-perfil': (context) => EditUsuarioScreen(viewModel: EditUsuarioViewModel(configuracoesRepository: context.read<ConfiguracoesRepository>(), storage: context.read()))
       },
     );
   }

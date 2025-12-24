@@ -31,11 +31,13 @@ class LoginRepositoryRemote implements LoginRepository{
       await storage.write(key: 'refresh_token', value: loginApiModel.refreshToken);
       await storage.write(key: 'email', value: loginApiModel.email);
       await storage.write(key: 'usuario', value: loginApiModel.usuario);
+      await storage.write(key: 'foto', value: loginApiModel.foto);
 
       User user = User(token: loginApiModel.token, 
       refreshToken: loginApiModel.refreshToken, 
       expiration: loginApiModel.expiration, 
-      nome: loginApiModel.usuario, email: loginApiModel.email);
+      nome: loginApiModel.usuario, email: loginApiModel.email,
+      foto: loginApiModel.foto);
 
       NotificationSettings permission = await firebaseMessaging
           .requestPermission();

@@ -1,5 +1,7 @@
 import 'dart:async';
+import 'dart:convert';
 
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
@@ -32,11 +34,13 @@ class HomeViewModel extends ChangeNotifier {
   List<PlacePrediction> placesPrediction = [];
   final Completer<GoogleMapController> controllerPlace = Completer();
   Exception? error;
-  bool carregandoTela = false;
+  bool carregandoTela = true;
   List<OcorrenciaMap> ocorrencias = [];
   String valorSelecionado = "ano";
   bool estaLogado = false;
-
+  String nomeUsuario = "";
+  String emailUsuario = "";
+  String foto = "";
 
   Future<void> initState() async {
     try {
@@ -44,6 +48,16 @@ class HomeViewModel extends ChangeNotifier {
       notifyListeners();
 
       await _defineSeEstaLogado();
+
+      if(estaLogado){
+        nomeUsuario = (await storage.read(key: "usuario"))!;
+        emailUsuario = (await storage.read(key: "email"))!;
+        var fotoUsuario = await storage.read(key: "foto");
+        if(fotoUsuario != null && fotoUsuario.isNotEmpty){
+          foto = fotoUsuario;
+        }
+        
+      }
 
       final brasilia = tz.getLocation('America/Sao_Paulo');
       var dataFim = tz.TZDateTime.now(brasilia);

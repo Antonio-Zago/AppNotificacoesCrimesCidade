@@ -17,5 +17,7 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
         public string Usuario { get; set; }
 
         public string Email { get; set; }
+
+        public byte[]? Foto { get; set; }
     }
 }

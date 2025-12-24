@@ -2,6 +2,8 @@ import 'package:dio/dio.dart';
 import 'package:notifica_crimes_frontend/config/api_routes.dart';
 import 'package:notifica_crimes_frontend/data/services/model/agressao_request/agressao_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/assalto_request/assalto_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/configuracao_response/configuracao_response_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/configuracoes_request/configuracoes_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/fcm_request/fcm_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/local_request/local_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/local_response/local_response_api_model.dart';
@@ -15,6 +17,7 @@ import 'package:notifica_crimes_frontend/data/services/model/prediction_place_re
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/user_update_request/user_update_request_api_model.dart';
 import 'package:result_dart/result_dart.dart';
 
 class ApiClient {
@@ -348,6 +351,49 @@ class ApiClient {
     } on DioException catch (exception) {
       return Failure(_handleDioError(exception));
     }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> putConfiguracao(ConfiguracoesRequestApiModel request) async {
+    try {
+      var retorno = await dio.put(
+        '${ApiRoutes.urlBase}/usuario/updateConfiguracoes',
+        data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<ConfiguracaoResponseApiModel>> findConfiguracoes(String email) async {
+    try {
+
+      final response = await dio.get('${ApiRoutes.urlBase}/usuario/getConfiguracoes/$email');
+
+      return Success(ConfiguracaoResponseApiModel.fromJson(response.data));
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> putUser(UserUpdateRequestApiModel request) async {
+    try {
+      var retorno = await dio.put(
+        '${ApiRoutes.urlBase}/usuario',
+        data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    } on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }

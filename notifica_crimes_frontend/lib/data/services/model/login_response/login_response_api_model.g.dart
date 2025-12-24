@@ -14,6 +14,7 @@ LoginResponseApiModel _$LoginResponseApiModelFromJson(
   expiration: DateTime.parse(json['expiration'] as String),
   usuario: json['usuario'] as String,
   email: json['email'] as String,
+  foto: json['foto'] as String?,
 );
 
 Map<String, dynamic> _$LoginResponseApiModelToJson(
@@ -24,4 +25,5 @@ Map<String, dynamic> _$LoginResponseApiModelToJson(
   'expiration': instance.expiration.toIso8601String(),
   'usuario': instance.usuario,
   'email': instance.email,
+  'foto': instance.foto,
 };

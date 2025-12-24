@@ -38,7 +38,7 @@ namespace AppNotificacoesCrimesCidade.Application.Middlewares
 
                     if (usuario == null || usuario.SessionId != guid)
                     {
-                        context.Response.StatusCode = 400;
+                        context.Response.StatusCode = 401;
                         return;
                     }
                 }

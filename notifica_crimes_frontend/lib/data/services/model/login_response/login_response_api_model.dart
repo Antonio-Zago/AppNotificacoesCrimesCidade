@@ -5,13 +5,14 @@ part 'login_response_api_model.g.dart';
 @JsonSerializable()
 class LoginResponseApiModel {
 
-  LoginResponseApiModel( {required this.token, required this.refreshToken,required this.expiration,required this.usuario,required this.email,});
+  LoginResponseApiModel({required this.token, required this.refreshToken,required this.expiration,required this.usuario,required this.email, required this.foto,  });
 
   final String token;
   final String refreshToken;
   final DateTime expiration;
   final String usuario;
   final String email;
+  final String? foto;
   
   Map<String, dynamic> toJson() => _$LoginResponseApiModelToJson(this);
 
