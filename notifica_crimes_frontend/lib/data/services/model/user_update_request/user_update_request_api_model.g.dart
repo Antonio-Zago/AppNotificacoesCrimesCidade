@@ -11,7 +11,7 @@ UserUpdateRequestApiModel _$UserUpdateRequestApiModelFromJson(
 ) => UserUpdateRequestApiModel(
   email: json['email'] as String,
   nome: json['nome'] as String,
-  foto: json['foto'] as String,
+  foto: json['foto'] as String?,
 );
 
 Map<String, dynamic> _$UserUpdateRequestApiModelToJson(

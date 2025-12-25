@@ -121,19 +121,7 @@ class _RegisterScreenState extends State<RegisterScreen> {
                                     mensagemValidacao: "Necessário preencher o campo Repita a senha",
                                   ),
                                 ),
-                                Padding(
-                                  padding: EdgeInsetsGeometry.only(
-                                    top: 5,
-                                    left: 15,
-                                  ),
-                                  child: Container(
-                                    width: double.infinity,
-                                    child: Text(
-                                      "Esqueceu sua senha?",
-                                      style: TextStyle(fontSize: 10),
-                                    ),
-                                  ),
-                                ),
+                                
                                 Padding(
                                   padding: EdgeInsetsGeometry.only(top: 50),
                                   child: widget.viewModel.carregando

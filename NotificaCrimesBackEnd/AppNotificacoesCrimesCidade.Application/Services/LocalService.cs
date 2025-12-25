@@ -196,6 +196,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
         {
             try
             {
+
                 var locaisNotificar = _query.ExecuteReader(@"SELECT B.FCMTOKEN,
                                                              ST_Distance(
                                                                 A.COORDENADAS,
@@ -207,10 +208,11 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                                                             A.NOME
                                                         FROM LOCAIS A
                                                         INNER JOIN USUARIOS B ON A.USUARIO_ID = B.ID
+                                                        INNER JOIN USUARIO_CONFIGURACOES C ON C.ID_USUARIO = B.ID AND C.NOTIFICA_LOCAL = TRUE   
                                                         WHERE ST_DWithin(
                                                             A.COORDENADAS,
                                                             ST_SetSRID(ST_MakePoint(@longitude, @latitude), 4326)::geography,
-                                                            5000 
+                                                            C.DISTANCIA_LOCAL 
                                                         )
                                                         AND FCMTOKEN IS NOT NULL
                                                         AND B.ID <> @usuario", [new NpgsqlParameter("@longitude", longitude),

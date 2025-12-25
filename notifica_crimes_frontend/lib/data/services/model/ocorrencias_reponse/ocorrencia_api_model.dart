@@ -1,4 +1,5 @@
 import 'package:json_annotation/json_annotation.dart';
+import 'package:notifica_crimes_frontend/config/converters/local_datetime_converter.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/agressao_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/assalto_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/localizacao_api_model.dart';
@@ -14,6 +15,10 @@ class OcorrenciaApiModel {
 
   final String id;
   final String descricao;
+   @JsonKey(
+    fromJson: LocalDateTimeConverter.fromJson,
+    toJson: LocalDateTimeConverter.toJson,
+  )
   final DateTime dataHora;
   final LocalizacaoApiModel localizacao;
   final AssaltoApiModel? assalto;

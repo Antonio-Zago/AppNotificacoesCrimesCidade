@@ -79,6 +79,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     RouboDto? rouboDto = new RouboDto();
                     AgressaoDto? agressaoDto = new AgressaoDto();
 
+                    var ocorrenciaId = (int)ocorrencia["ocorrencia"];
+
                     if ((string)ocorrencia["tipo"] == "ASSALTO")
                     {
                         var id = (int)ocorrencia["assalto"];
@@ -142,10 +144,12 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                            onFailure: dto => throw new Exception("Não foi possível obter o dto")
                           );
 
+                    var dataBanco = (DateTime)ocorrencia["datahora"];
+
                     var dto = new OcorrenciaDto()
                         {
-                            Id = _hashidsPublicIdService.ToPublic((int)ocorrencia["ocorrencia"]),
-                            DataHora = ((DateTime)ocorrencia["datahora"]).ToLocalTime(), //No banco de dados está armazenado em UTC, preciso converter para horário local
+                            Id = _hashidsPublicIdService.ToPublic(ocorrenciaId),
+                            DataHora = DateTime.SpecifyKind(dataBanco, DateTimeKind.Utc),
                             Descricao = (string)ocorrencia["descricao"],
                             Agressao = agressaoDto,
                             Assalto = assaltoDto,

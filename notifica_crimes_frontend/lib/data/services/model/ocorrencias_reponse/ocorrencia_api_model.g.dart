@@ -10,7 +10,7 @@ OcorrenciaApiModel _$OcorrenciaApiModelFromJson(Map<String, dynamic> json) =>
     OcorrenciaApiModel(
       id: json['id'] as String,
       descricao: json['descricao'] as String,
-      dataHora: DateTime.parse(json['dataHora'] as String),
+      dataHora: LocalDateTimeConverter.fromJson(json['dataHora'] as String),
       localizacao: LocalizacaoApiModel.fromJson(
         json['localizacao'] as Map<String, dynamic>,
       ),
@@ -29,7 +29,7 @@ Map<String, dynamic> _$OcorrenciaApiModelToJson(OcorrenciaApiModel instance) =>
     <String, dynamic>{
       'id': instance.id,
       'descricao': instance.descricao,
-      'dataHora': instance.dataHora.toIso8601String(),
+      'dataHora': LocalDateTimeConverter.toJson(instance.dataHora),
       'localizacao': instance.localizacao,
       'assalto': instance.assalto,
       'agressao': instance.agressao,

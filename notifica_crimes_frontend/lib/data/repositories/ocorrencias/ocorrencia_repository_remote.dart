@@ -245,7 +245,7 @@ class OcorrenciaRepositoryRemote implements OcorrenciaRepository {
         OcorrenciaMap model = OcorrenciaMap(
           id: apiModel.id,
           descricao: apiModel.descricao,
-          dataHora: apiModel.dataHora,
+          dataHora: apiModel.dataHora.toLocal(),
           localizacao: localizacaoModel,
           assalto: assaltoModel,
           agressao: agressaoModel,
