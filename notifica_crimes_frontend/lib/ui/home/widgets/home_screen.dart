@@ -58,10 +58,10 @@ class _HomeScreenState extends State<HomeScreen> {
         return Scaffold(
           key: _scaffoldKey,
           drawer: DrawerDefault(
-            estaLogado: widget.viewModel.estaLogado, 
-            sair: widget.viewModel.sair, 
+            estaLogado: widget.viewModel.estaLogado,
+            sair: widget.viewModel.sair,
             emailUsuario: widget.viewModel.emailUsuario,
-            nomeUsuario: widget.viewModel.nomeUsuario, 
+            nomeUsuario: widget.viewModel.nomeUsuario,
             fotoBase64: widget.viewModel.foto,
           ),
           body: ListenableBuilder(
@@ -71,7 +71,12 @@ class _HomeScreenState extends State<HomeScreen> {
                 children: [
                   GoogleMap(
                     initialCameraPosition: CameraPosition(
-                      target: LatLng(-23.22815468536845, -45.896856363457964),
+                      target: widget.viewModel.localizacaoAtual != null
+                          ? LatLng(
+                              widget.viewModel.localizacaoAtual!.latitude,
+                              widget.viewModel.localizacaoAtual!.longitude,
+                            )
+                          : LatLng(-23.22815468536845, -45.896856363457964),
                       zoom: 14.4746,
                     ),
                     onMapCreated: (controller) {

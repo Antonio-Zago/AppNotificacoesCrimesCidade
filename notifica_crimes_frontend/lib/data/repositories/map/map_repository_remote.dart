@@ -1,3 +1,4 @@
+import 'package:geolocator/geolocator.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/center_request_api_model.dart';
@@ -74,9 +75,47 @@ class MapRepositoryRemote implements MapRepository {
         longitude: placeDetailApiModel.location.longitude,
       );
 
-      PlaceDetail placeDetail = PlaceDetail(id: placeDetailApiModel.id, location: latLng);
+      PlaceDetail placeDetail = PlaceDetail(
+        id: placeDetailApiModel.id,
+        location: latLng,
+      );
 
       return Success(placeDetail);
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  @override
+  Future<Result<Position>> getLocalizacaoAtual() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    try {
+      // Verifica se o GPS está ligado
+      serviceEnabled = await Geolocator.isLocationServiceEnabled();
+      if (!serviceEnabled) {
+        throw Exception('Serviço de localização desativado');
+      }
+
+      // Verifica permissão
+      permission = await Geolocator.checkPermission();
+      if (permission == LocationPermission.denied) {
+        permission = await Geolocator.requestPermission();
+        if (permission == LocationPermission.denied) {
+          throw Exception('Permissão de localização negada');
+        }
+      }
+
+      if (permission == LocationPermission.deniedForever) {
+        throw Exception('Permissão negada permanentemente');
+      }
+
+      // Obtém localização
+      var localizacao = await Geolocator.getCurrentPosition(
+        locationSettings: LocationSettings(accuracy: LocationAccuracy.high)
+      );
+      return Success(localizacao);
     } on Exception catch (exception) {
       return Failure(Exception(exception));
     }

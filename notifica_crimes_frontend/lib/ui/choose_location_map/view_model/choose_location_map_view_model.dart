@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/domain/models/place_prediction/place_prediction.dart';
@@ -20,6 +21,27 @@ class ChooseLocationMapViewModel extends ChangeNotifier {
   Exception? error;
   Marker? markerLocalSelecionado;
   LatLng? localSelecionado;
+  Position? localizacaoAtual;
+  bool carregandoTela = true;
+
+  Future<void> initState() async {
+    try {
+      carregandoTela = true;
+      notifyListeners();
+
+      var resultadoLocalizacao = await mapRepository.getLocalizacaoAtual();
+
+      localizacaoAtual = resultadoLocalizacao.getOrThrow();
+
+      carregandoTela = false;
+      notifyListeners();
+    } on Exception catch (exception) {
+      error = exception;
+      carregandoTela = false;
+    } finally {
+      notifyListeners();
+    }
+  }
 
   Future<void> onChangedSearch(String text) async {
     try {

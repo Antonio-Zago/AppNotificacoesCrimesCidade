@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/repositories/notifications/notification_repository.dart';
@@ -41,6 +42,7 @@ class HomeViewModel extends ChangeNotifier {
   String nomeUsuario = "";
   String emailUsuario = "";
   String foto = "";
+  Position? localizacaoAtual;
 
   Future<void> initState() async {
     try {
@@ -78,6 +80,10 @@ class HomeViewModel extends ChangeNotifier {
       );
 
       ocorrencias = ocorrenciasMap.getOrThrow();
+
+      var resultadoLocalizacao = await mapRepository.getLocalizacaoAtual();
+
+      localizacaoAtual = resultadoLocalizacao.getOrThrow();
 
       carregandoTela = false;
       notifyListeners();

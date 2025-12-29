@@ -3,6 +3,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:notifica_crimes_frontend/config/colors_constants.dart';
 import 'package:notifica_crimes_frontend/ui/choose_location_map/view_model/choose_location_map_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/button_default.dart';
+import 'package:notifica_crimes_frontend/ui/core/ui/circular_progress_indicator_default.dart';
 import 'package:notifica_crimes_frontend/ui/core/ui/search_text_form_field.dart';
 
 class ChooseLocationMapScreen extends StatefulWidget {
@@ -33,6 +34,7 @@ class _ChooseLocationMapScreenState extends State<ChooseLocationMapScreen> {
         });
       }
     });
+    widget.viewModel.initState();
   }
 
   @override
@@ -56,11 +58,28 @@ class _ChooseLocationMapScreenState extends State<ChooseLocationMapScreen> {
       body: ListenableBuilder(
         listenable: widget.viewModel,
         builder: (BuildContext context, _) {
+          if (widget.viewModel.carregandoTela) {
+            return const Scaffold(
+              body: Center(
+                child: SizedBox(
+                  width: 80, // tamanho personalizado
+                  height: 80,
+                  child: CircularProgressIndicatorDefault(),
+                ),
+              ),
+            );
+          }
+
           return Stack(
             children: [
               GoogleMap(
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(-23.22815468536845, -45.896856363457964),
+                  target: widget.viewModel.localizacaoAtual != null
+                          ? LatLng(
+                              widget.viewModel.localizacaoAtual!.latitude,
+                              widget.viewModel.localizacaoAtual!.longitude,
+                            )
+                          : LatLng(-23.22815468536845, -45.896856363457964),
                   zoom: 14.4746,
                 ),
                 onMapCreated: (controller) =>
@@ -94,17 +113,19 @@ class _ChooseLocationMapScreenState extends State<ChooseLocationMapScreen> {
               Positioned(
                 bottom: 40,
                 left: 0,
-                right: 0, 
+                right: 0,
                 child: Center(
                   child: SizedBox(
                     width: 300,
                     child: ButtonDefault(
-                      onPressed: widget.viewModel.localSelecionado == null ? null : (){
-                        widget.viewModel.onPressedSaveButton(context);
-                      },
-                      label: "Salvar localização", 
-                      icon: Icons.save, 
-                      backgroundColor: Color(ColorsConstants.verdeBotaoSalvar)
+                      onPressed: widget.viewModel.localSelecionado == null
+                          ? null
+                          : () {
+                              widget.viewModel.onPressedSaveButton(context);
+                            },
+                      label: "Salvar localização",
+                      icon: Icons.save,
+                      backgroundColor: Color(ColorsConstants.verdeBotaoSalvar),
                     ),
                   ),
                 ),
