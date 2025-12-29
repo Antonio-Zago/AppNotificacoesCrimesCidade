@@ -84,33 +84,7 @@ class _ConfiguracoesScreenState extends State<ConfiguracoesScreen> {
                       child: Form(
                         key: widget.viewModel.formKey,
                         child: Column(
-                          children: [
-                            DropdownButtonDefault(
-                              onChanged:
-                                  widget.viewModel.onChangedButtonNotificaLocalizacao,
-                              valorSelecionado: widget.viewModel.notificaLocalizacao,
-                              opcoes: [
-                                DropdownMenuItem(
-                                  value: 'N',
-                                  child: Text('Não'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'S',
-                                  child: Text('Sim'),
-                                ),
-                              ],
-                              titulo: "Notifica perto da minha localização",
-                            ),
-                            if (widget.viewModel.notificaLocalizacao != null &&
-                                widget.viewModel.notificaLocalizacao == "S")
-                              TextFormFieldDefault(
-                                controller: widget
-                                    .viewModel
-                                    .notificaLocalizacaoDistanciaController,
-                                mensagemValidacao:
-                                    "Necessário preencher a distância",
-                                label: "Distância localização",
-                              ),
+                          children: [ 
 
                             DropdownButtonDefault(
                               onChanged:

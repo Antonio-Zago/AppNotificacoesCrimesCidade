@@ -12,9 +12,7 @@ class ConfiguracoesViewModel extends ChangeNotifier{
   bool carregandoTela = false;
   final formKey = GlobalKey<FormState>();
   String? notificaLocal;
-  String? notificaLocalizacao;
   TextEditingController notificaLocalDistanciaController = TextEditingController();
-  TextEditingController notificaLocalizacaoDistanciaController = TextEditingController();
   Exception? error;
   Configuracao? configuracao;
 
@@ -28,9 +26,7 @@ class ConfiguracoesViewModel extends ChangeNotifier{
 
       if(configuracao != null){
         notificaLocal = configuracao!.notificaLocal;
-        notificaLocalizacao = configuracao!.notificaLocalizacao;
         notificaLocalDistanciaController.text = configuracao!.distanciaLocal.toString();
-        notificaLocalizacaoDistanciaController.text = configuracao!.distanciaLocalizacao.toString();
       }
       
       carregandoTela = false;
@@ -54,13 +50,6 @@ class ConfiguracoesViewModel extends ChangeNotifier{
     notifyListeners();
   }
 
-  void onChangedButtonNotificaLocalizacao(String? valor) {
-
-    notificaLocalizacao = valor;
-
-    notifyListeners();
-  }
-
   Future<bool> saveConfiguracoes() async {
     carregandoTela = true;
     notifyListeners();
@@ -72,12 +61,7 @@ class ConfiguracoesViewModel extends ChangeNotifier{
           distanciaLocal = double.parse(notificaLocalDistanciaController.text);
         }
 
-        var distanciaLocalizacao = 0.0;
-        if(notificaLocalizacaoDistanciaController.text.isNotEmpty){
-          distanciaLocalizacao = double.parse(notificaLocalizacaoDistanciaController.text);
-        }
-
-        await configuracoesRepository.putConfiguracoes(notificaLocal == "S", notificaLocalizacao == "S", distanciaLocal, distanciaLocalizacao);
+        await configuracoesRepository.putConfiguracoes(notificaLocal == "S", true, distanciaLocal, 0.0);
 
         carregandoTela = false;
         notifyListeners();

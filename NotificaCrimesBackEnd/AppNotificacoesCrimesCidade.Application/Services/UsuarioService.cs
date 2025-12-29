@@ -248,6 +248,13 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             {
                 await _unitOfWork.BeginTransactionAsync();
 
+                var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(form.Email);
+
+                if (usuario != null)
+                {
+                    throw new Exception("Já existe usuário para esse email");
+                }
+
                 byte[] fotoBytes = null;
 
                 if (!form.Foto.IsNullOrEmpty())
@@ -255,7 +262,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     fotoBytes = Convert.FromBase64String(form.Foto);
                 }
 
-                var usuario = new Usuario()
+                var usuarioNovo = new Usuario()
                 {
                     Email = form.Email,
                     Nome = form.Nome,
@@ -263,7 +270,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     Foto = fotoBytes,
                 };
 
-                var entidadeSalva = await _unitOfWork.UsuarioRepository.AddAsync(usuario);
+                var entidadeSalva = await _unitOfWork.UsuarioRepository.AddAsync(usuarioNovo);
 
                 var usuarioConfiguracoes = new UsuarioConfiguracoes()
                 {

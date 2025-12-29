@@ -104,11 +104,7 @@ class _OcorrenciaScreenState extends State<OcorrenciaScreen> {
                                 DropdownMenuItem(
                                   value: 'A',
                                   child: Text('Agressão'),
-                                ),
-                                DropdownMenuItem(
-                                  value: 'O',
-                                  child: Text('Outro'),
-                                ),
+                                )
                               ],
                               titulo: "Tipo",
                             ),
