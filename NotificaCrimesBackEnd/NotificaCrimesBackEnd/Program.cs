@@ -26,6 +26,7 @@ FirebaseApp.Create(new AppOptions()
     Credential = GoogleCredential.FromFile("secrets/key.json")
 });
 
+
 builder.Services.AddScoped<IUnitOfWork, UnitOfWork>();
 builder.Services.AddScoped<IAgressaoService, AgressaoService>();
 builder.Services.AddScoped<IServiceFactory, ServiceFactory>();

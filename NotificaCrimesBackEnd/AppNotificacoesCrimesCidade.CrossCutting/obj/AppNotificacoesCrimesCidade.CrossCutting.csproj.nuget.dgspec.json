@@ -58,6 +58,14 @@
               "target": "Package",
               "version": "[3.4.0, )"
             },
+            "FluentEmail.Core": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
+            "FluentEmail.Smtp": {
+              "target": "Package",
+              "version": "[3.0.2, )"
+            },
             "Hashids.net": {
               "target": "Package",
               "version": "[1.7.0, )"

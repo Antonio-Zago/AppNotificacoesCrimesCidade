@@ -75,5 +75,33 @@ namespace NotificaCrimesBackEnd.Controllers
                 }
                );
         }
+
+        [HttpPut("validarEmail")]
+        public async Task<ActionResult<bool>> UpdateCodigoValidacaoEmail([FromBody] UsuarioEmailValidacaoForm form)
+        {
+            var user = await _usuarioService.UpdateCodigoValidacaoEmail(form.Email);
+
+            return user.Map<ActionResult>(
+                onSuccess: user => Ok(user),
+                onFailure: err =>
+                {
+                    return BadRequest(err);
+                }
+               );
+        }
+
+        [HttpPut("verificarCodigoEmail")]
+        public async Task<ActionResult<bool>> verificarCodigoValidacaoEmail([FromBody] UsuarioEmailValidacaoForm form)
+        {
+            var user = await _usuarioService.ValidarCodigoEmail(form);
+
+            return user.Map<ActionResult>(
+                onSuccess: user => Ok(user),
+                onFailure: err =>
+                {
+                    return BadRequest(err);
+                }
+               );
+        }
     }
 }

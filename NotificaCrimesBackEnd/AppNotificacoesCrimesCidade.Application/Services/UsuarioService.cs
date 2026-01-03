@@ -5,6 +5,7 @@ using AppNotificacoesCrimesCidade.Application.Interfaces;
 using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
+using FluentEmail.Core;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
@@ -15,6 +16,7 @@ using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
 using System.Security.Claims;
 using System.Text;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
 namespace AppNotificacoesCrimesCidade.Application.Services
@@ -30,13 +32,16 @@ namespace AppNotificacoesCrimesCidade.Application.Services
         private readonly ITokenService _tokenService;
 
         private readonly IConfiguration _config;
-        public UsuarioService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Usuario, UsuarioDto, UsuarioForm> mapper, ITokenService tokenService, IConfiguration config) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
+
+        private readonly IFluentEmail _fluentEmail;
+        public UsuarioService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Usuario, UsuarioDto, UsuarioForm> mapper, ITokenService tokenService, IConfiguration config, IFluentEmail fluentEmail) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {
             _unitOfWork = unitOfWork;
             _mapper = mapper;
             _hashidsPublicIdService = hashidsPublicIdService;
             _tokenService = tokenService;
             _config = config;
+            _fluentEmail = fluentEmail;
         }
 
         private async Task<Usuario> FindByEmail(string email)
@@ -164,7 +169,10 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     Expiration = token.ValidTo,
                     Usuario = user.Nome,
                     Email = user.Email,
-                    Foto = user.Foto
+                    Foto = user.Foto,
+                    EmailValidado = user.EmailValidado,
+                    CodigoValidacaoEmail = user.CodigoValidacaoEmail,
+                    ExpiracaoCodigoValidacaoEmail = user.ExpiracaoCodigoValidacaoEmail,
                 });
                 
                 throw new Exception($"Não encontrado usuário");
@@ -248,6 +256,11 @@ namespace AppNotificacoesCrimesCidade.Application.Services
             {
                 await _unitOfWork.BeginTransactionAsync();
 
+                if (!VerificarEmailValido(form.Email))
+                {
+                    throw new Exception("Email inválido");
+                }
+
                 var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(form.Email);
 
                 if (usuario != null)
@@ -268,6 +281,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                     Nome = form.Nome,
                     Senha = form.Senha.GerarHash(),
                     Foto = fotoBytes,
+                    EmailValidado = false,
+                    
                 };
 
                 var entidadeSalva = await _unitOfWork.UsuarioRepository.AddAsync(usuarioNovo);
@@ -296,6 +311,15 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                 await _unitOfWork.RoolbackTransactionAsync();
                 return Result<UsuarioDto>.Failure(new ErrorDefault(ex.Message));
             }
+        }
+
+        private bool VerificarEmailValido(string email)
+        {
+            if (string.IsNullOrWhiteSpace(email))
+                return false;
+
+            var regex = new Regex(@"^[^@\s]+@[^@\s]+\.[^@\s]+$");
+            return regex.IsMatch(email);
         }
 
         public async Task<Result<bool>> UpdateConfiguracoesAsync(UsuarioConfiguracaoForm form)
@@ -383,6 +407,86 @@ namespace AppNotificacoesCrimesCidade.Application.Services
                 usuario.Foto = fotoBytes;
 
                 var entidadeConfiguracoesSalva = await _unitOfWork.UsuarioRepository.UpdateAsync(usuario);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<bool>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+
+        public async Task<Result<bool>> UpdateCodigoValidacaoEmail(string email)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(email);
+
+                if (usuario == null)
+                {
+                    throw new Exception("Usuário não encontrado");
+                }
+
+                var random = new Random();
+                int codigo = random.Next(10000, 100000);
+
+                usuario.CodigoValidacaoEmail = codigo;
+                usuario.ExpiracaoCodigoValidacaoEmail = DateTime.Now.ToUniversalTime().AddMinutes(5);
+
+                var entidadeSalva = await _unitOfWork.UsuarioRepository.UpdateAsync(usuario);
+
+                await _unitOfWork.CommitAsync();
+
+                await _unitOfWork.CommitTransactionAsync();
+
+                await _fluentEmail
+                    .To(email)
+                    .Subject("Notifica Crimes - Validação e-mail")
+                    .Body(@$"<b>Aviso:</b> Este é um e-mail automático. Por favor, não responda a esta mensagem. <br>
+Olá, <br>
+Recebemos uma solicitação de cadastro ao app Notifica Crimes com esse e-mail. Para concluir, informe o código abaixo na tela de confirmação: <br> <br>
+<b> {codigo} </b> <br> <br>
+Este código é temporário e expirará em breve. <br>
+Atenciosamente,", true)
+                    .SendAsync();
+
+                return Result<bool>.Success(true);
+            }
+            catch (Exception ex)
+            {
+                await _unitOfWork.RoolbackTransactionAsync();
+                return Result<bool>.Failure(new ErrorDefault(ex.Message));
+            }
+        }
+
+        public async Task<Result<bool>> ValidarCodigoEmail(UsuarioEmailValidacaoForm form)
+        {
+            try
+            {
+                await _unitOfWork.BeginTransactionAsync();
+
+                var usuario = await _unitOfWork.UsuarioRepository.FindByEmail(form.Email);
+
+                if (usuario == null)
+                {
+                    throw new Exception("Usuário não encontrado");
+                }
+
+                if (usuario.CodigoValidacaoEmail != form.Codigo || DateTime.Now.ToUniversalTime() > usuario.ExpiracaoCodigoValidacaoEmail)
+                {
+                    throw new Exception("Erro na tentativa de validação");
+                }
+
+                usuario.EmailValidado = true;
+
+                var entidadeSalva = await _unitOfWork.UsuarioRepository.UpdateAsync(usuario);
 
                 await _unitOfWork.CommitAsync();
 

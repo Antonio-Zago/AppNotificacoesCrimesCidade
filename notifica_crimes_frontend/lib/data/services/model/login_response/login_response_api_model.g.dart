@@ -15,6 +15,11 @@ LoginResponseApiModel _$LoginResponseApiModelFromJson(
   usuario: json['usuario'] as String,
   email: json['email'] as String,
   foto: json['foto'] as String?,
+  emailValidado: json['emailValidado'] as bool,
+  codigoValidacaoEmail: (json['codigoValidacaoEmail'] as num?)?.toInt(),
+  expiracaoCodigoValidacaoEmail: json['expiracaoCodigoValidacaoEmail'] == null
+      ? null
+      : DateTime.parse(json['expiracaoCodigoValidacaoEmail'] as String),
 );
 
 Map<String, dynamic> _$LoginResponseApiModelToJson(
@@ -26,4 +31,8 @@ Map<String, dynamic> _$LoginResponseApiModelToJson(
   'usuario': instance.usuario,
   'email': instance.email,
   'foto': instance.foto,
+  'emailValidado': instance.emailValidado,
+  'codigoValidacaoEmail': instance.codigoValidacaoEmail,
+  'expiracaoCodigoValidacaoEmail': instance.expiracaoCodigoValidacaoEmail
+      ?.toIso8601String(),
 };

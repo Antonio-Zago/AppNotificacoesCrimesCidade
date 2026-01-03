@@ -382,9 +382,10 @@ class HomeViewModel extends ChangeNotifier {
     estaLogado = false;
 
     final token = await storage.read(key: "token");
+    final emailValidado = await storage.read(key: "email-validado");
     
-    if(token != null ){
-      if(token.isNotEmpty){
+    if(token != null && emailValidado != null){
+      if(token.isNotEmpty && emailValidado == "S"){
         estaLogado = true;
       }
     }

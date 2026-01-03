@@ -19,5 +19,11 @@ namespace AppNotificacoesCrimesCidade.Application.Dtos
         public string Email { get; set; }
 
         public byte[]? Foto { get; set; }
+
+        public bool EmailValidado { get; set; }
+
+        public int? CodigoValidacaoEmail { get; set; }
+
+        public DateTime? ExpiracaoCodigoValidacaoEmail { get; set; }
     }
 }

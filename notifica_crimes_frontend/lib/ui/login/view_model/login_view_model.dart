@@ -3,8 +3,7 @@ import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 import 'package:notifica_crimes_frontend/data/repositories/login/login_repository.dart';
 
 class LoginViewModel extends ChangeNotifier {
-
-  LoginViewModel( {required this.loginRepository,});
+  LoginViewModel({required this.loginRepository});
 
   final LoginRepository loginRepository;
 
@@ -17,27 +16,53 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPressedButtonLogin(BuildContext context) async {
     try {
       carregando = true;
-      notifyListeners(); 
+      notifyListeners();
 
-      if (formKey.currentState!.validate()){
-        var retorno = await loginRepository.login(controllerUsuario.text, controllerSenha.text);
+      if (formKey.currentState!.validate()) {
+        var retorno = await loginRepository.login(
+          controllerUsuario.text,
+          controllerSenha.text,
+        );
 
         var usuario = retorno.getOrThrow();
 
-        await Navigator.pushNamed(
-          context,
-          "/home"
-        );
+        if (usuario.emailValidado) {
+          await Navigator.pushNamed(context, "/home");
+        }else{
+
+          var codigoExpirado = false;
+
+          codigoExpirado = usuario.expiracaoCodigoValidacaoEmail == null;
+
+          if(usuario.expiracaoCodigoValidacaoEmail != null){
+            codigoExpirado = usuario.expiracaoCodigoValidacaoEmail!.isBefore(DateTime.now());
+          }
+
+          if(usuario.codigoValidacaoEmail != null && !codigoExpirado){ 
+            Navigator.pushNamed(context, "/validacao-email");
+          }
+          else{
+            var retorno = await loginRepository.cadastrarCodigoValidacaoEmail();
+
+            var resultadoCadastroCodigo = retorno.getOrThrow();
+
+            if (!resultadoCadastroCodigo) {
+              throw Exception("Erro no cadastro do código de validação");
+            }
+
+            Navigator.pushNamed(context, "/validacao-email");
+          }
+        }
+
         carregando = false;
       }
 
       carregando = false;
-    }on Exception catch (exception) {
+    } on Exception catch (exception) {
       error = exception;
       carregando = false;
       notifyListeners();
-    }    
-    finally {
+    } finally {
       notifyListeners();
     }
   }
@@ -45,12 +70,9 @@ class LoginViewModel extends ChangeNotifier {
   Future<void> onPressedButtonRegister(BuildContext context) async {
     try {
       carregando = true;
-      notifyListeners(); 
+      notifyListeners();
 
-      Navigator.pushNamed(
-        context,
-        "/register"
-      );
+      Navigator.pushNamed(context, "/register");
 
       carregando = false;
     } finally {
@@ -63,10 +85,7 @@ class LoginViewModel extends ChangeNotifier {
       carregando = true;
       notifyListeners(); // avisa logo que começou
 
-      Navigator.pushNamed(
-        context,
-        "/"
-      );
+      Navigator.pushNamed(context, "/");
 
       carregando = false;
     } finally {

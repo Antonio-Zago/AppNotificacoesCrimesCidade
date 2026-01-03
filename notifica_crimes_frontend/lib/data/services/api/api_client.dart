@@ -18,6 +18,7 @@ import 'package:notifica_crimes_frontend/data/services/model/prediction_place_re
 import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/roubo_request/roubo_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/user_update_request/user_update_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/validacao_email_request/validacao_email_request_api_model.dart';
 import 'package:result_dart/result_dart.dart';
 
 class ApiClient {
@@ -394,6 +395,38 @@ class ApiClient {
     } on DioException catch (exception) {
       return Failure(_handleDioError(exception));
     } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> cadastrarCodigoValidacaoEmail(ValidacaoEmailRequestApiModel request) async {
+    try {
+
+      await dio.put(
+        '${ApiRoutes.urlBase}/usuario/validarEmail',
+        data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  Future<Result<bool>> validarCodigoEmail(ValidacaoEmailRequestApiModel request) async {
+    try {
+
+      await dio.put(
+        '${ApiRoutes.urlBase}/usuario/verificarCodigoEmail',
+        data: request.toJson(),
+      );
+
+      return Success(true);
+    } on DioException catch (exception) {
+      return Failure(_handleDioError(exception));
+    }on Exception catch (exception) {
       return Failure(Exception(exception));
     }
   }

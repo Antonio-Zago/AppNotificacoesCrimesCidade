@@ -6,6 +6,7 @@ using AppNotificacoesCrimesCidade.Application.Mappers;
 using AppNotificacoesCrimesCidade.Domain.Entities;
 using AppNotificacoesCrimesCidade.Domain.Interfaces;
 using FirebaseAdmin.Messaging;
+using FluentEmail.Core;
 using Npgsql;
 using System;
 using System.Collections.Generic;
@@ -31,6 +32,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
         private readonly ILocalizacaoOcorrenciaService _localizacaoService;
 
         private readonly IQuery _query;
+
+        
 
         public OcorrenciaService(IServiceFactory serviceFactory, IUnitOfWork unitOfWork, IHashidsPublicIdService hashidsPublicIdService, IMapperBase<Ocorrencia, OcorrenciaDto, OcorrenciaForm> mapper, IAssaltoService assaltoService, IRouboService rouboService, IAgressaoService agressaoService, IQuery query, ILocalizacaoOcorrenciaService localizacaoService) : base(serviceFactory, unitOfWork, hashidsPublicIdService, mapper)
         {

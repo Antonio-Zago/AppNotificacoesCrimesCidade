@@ -41,6 +41,8 @@ import 'package:notifica_crimes_frontend/ui/register_local/view_model/register_l
 import 'package:notifica_crimes_frontend/ui/register_local/widgets/register_local_screen.dart';
 import 'package:notifica_crimes_frontend/ui/splash/view_model/splash_view_model.dart';
 import 'package:notifica_crimes_frontend/ui/splash/widgets/splash_screen.dart';
+import 'package:notifica_crimes_frontend/ui/validacao_email/view_model/validacao_email_view_model.dart';
+import 'package:notifica_crimes_frontend/ui/validacao_email/widgets/validacao_email_screen.dart';
 import 'package:provider/provider.dart';
 import 'package:timezone/data/latest.dart' as tz;
 import 'package:uuid/uuid.dart';
@@ -103,7 +105,8 @@ class MyApp extends StatelessWidget {
         '/new-local': (context) => RegisterLocalScreen(viewModel: RegisterLocalViewModel(localRepository:  context.read<LocalRepository>())),
         '/edit-local': (context) => EditLocalScreen(viewModel: EditLocalViewModel(localRepository:  context.read<LocalRepository>())),
         '/configuracoes': (context) => ConfiguracoesScreen(viewModel: ConfiguracoesViewModel(configuracoesRepository: context.read<ConfiguracoesRepository>())),
-        '/edit-perfil': (context) => EditUsuarioScreen(viewModel: EditUsuarioViewModel(configuracoesRepository: context.read<ConfiguracoesRepository>(), storage: context.read()))
+        '/edit-perfil': (context) => EditUsuarioScreen(viewModel: EditUsuarioViewModel(configuracoesRepository: context.read<ConfiguracoesRepository>(), storage: context.read())),
+        '/validacao-email': (context) => ValidacaoEmailScreen(viewModel: ValidacaoEmailViewModel(loginRepository: context.read<LoginRepository>()))
       },
     );
   }

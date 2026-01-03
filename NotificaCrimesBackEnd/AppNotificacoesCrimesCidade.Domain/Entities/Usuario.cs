@@ -35,5 +35,15 @@ namespace AppNotificacoesCrimesCidade.Domain.Entities
 
         [Column("foto")]
         public byte[]? Foto { get; set; }
+
+        [Column("email_validado")]
+        public bool EmailValidado { get; set; }
+
+        [Column("codigo_validacao_email")]
+        public int? CodigoValidacaoEmail { get; set; }
+
+        [Column("expiracao_codigo_validacao_email")]
+        public DateTime? ExpiracaoCodigoValidacaoEmail { get; set; }
+
     }
 }

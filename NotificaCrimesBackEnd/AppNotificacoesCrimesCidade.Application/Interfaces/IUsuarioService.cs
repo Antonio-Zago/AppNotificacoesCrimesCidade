@@ -23,5 +23,9 @@ namespace AppNotificacoesCrimesCidade.Application.Interfaces
 
         Task<Result<bool>> UpdateUsuario(UsuarioForm form);
 
+        Task<Result<bool>> UpdateCodigoValidacaoEmail(string email);
+
+        Task<Result<bool>> ValidarCodigoEmail(UsuarioEmailValidacaoForm form);
+
     }
 }

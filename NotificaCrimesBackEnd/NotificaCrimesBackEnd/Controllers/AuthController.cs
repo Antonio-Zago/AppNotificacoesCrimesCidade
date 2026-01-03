@@ -38,6 +38,9 @@ namespace NotificaCrimesBackEnd.Controllers
         [Route("register")]
         public async Task<ActionResult<UsuarioDto>> Register([FromBody] UsuarioForm model)
         {
+            if (!ModelState.IsValid)
+                return BadRequest(ModelState);
+
             var result = await _usuarioService.AddAsync(model);
 
             return result.Map<ActionResult>(

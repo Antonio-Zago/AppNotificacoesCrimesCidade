@@ -23,6 +23,13 @@ namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
             var secretKey = configuration["JWT:SecretKey"]
                    ?? throw new ArgumentException("Invalid secret key!!");
 
+            var secretKeyEmail = configuration["Email:SecretKey"]
+                   ?? throw new ArgumentException("Invalid secret key!!");
+
+            services
+            .AddFluentEmail("antoniozagodev@gmail.com") // Email de onde envia
+            .AddSmtpSender("smtp.gmail.com", 587, "antoniozagodev@gmail.com", secretKeyEmail);
+
             services.AddAuthentication(options =>
             {
                 options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;

@@ -5,6 +5,7 @@ import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
 import 'package:notifica_crimes_frontend/data/services/model/fcm_request/fcm_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/login_request/login_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/register_request.dart/register_request_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/validacao_email_request/validacao_email_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/login/user.dart';
 import 'package:result_dart/result_dart.dart';
 
@@ -32,12 +33,14 @@ class LoginRepositoryRemote implements LoginRepository{
       await storage.write(key: 'email', value: loginApiModel.email);
       await storage.write(key: 'usuario', value: loginApiModel.usuario);
       await storage.write(key: 'foto', value: loginApiModel.foto);
+      await storage.write(key: 'email-validado', value: loginApiModel.emailValidado ? "S" : "N");
 
       User user = User(token: loginApiModel.token, 
       refreshToken: loginApiModel.refreshToken, 
       expiration: loginApiModel.expiration, 
       nome: loginApiModel.usuario, email: loginApiModel.email,
-      foto: loginApiModel.foto);
+      foto: loginApiModel.foto, codigoValidacaoEmail: loginApiModel.codigoValidacaoEmail,
+      emailValidado: loginApiModel.emailValidado, expiracaoCodigoValidacaoEmail: loginApiModel.expiracaoCodigoValidacaoEmail);
 
       NotificationSettings permission = await firebaseMessaging
           .requestPermission();
@@ -75,6 +78,46 @@ class LoginRepositoryRemote implements LoginRepository{
       var loginApiModel = retorno.getOrThrow();
 
       return Success(loginApiModel);
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  @override
+  Future<Result<bool>> cadastrarCodigoValidacaoEmail() async {
+    try{
+
+      var email = await storage.read(key: 'email');
+
+      var request = ValidacaoEmailRequestApiModel(codigo: null, email: email!);
+
+      var retorno = await apiClient.cadastrarCodigoValidacaoEmail(request);
+
+      var resultado = retorno.getOrThrow();
+
+      return Success(resultado);
+    } on Exception catch (exception) {
+      return Failure(Exception(exception));
+    }
+  }
+
+  @override
+  Future<Result<bool>> validarCodigoEmail(int codigo) async {
+    try{
+
+      var email = await storage.read(key: 'email');
+
+      var request = ValidacaoEmailRequestApiModel(codigo: codigo, email: email!);
+
+      var retorno = await apiClient.validarCodigoEmail(request);
+
+      var resultado = retorno.getOrThrow();
+
+      if(resultado){
+        await storage.write(key: 'email-validado', value: "S" );
+      }
+
+      return Success(resultado);
     } on Exception catch (exception) {
       return Failure(Exception(exception));
     }
