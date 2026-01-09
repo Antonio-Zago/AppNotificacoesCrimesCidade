@@ -16,8 +16,8 @@ namespace AppNotificacoesCrimesCidade.Application.Services
     {
         public JwtSecurityToken GenerateAccessToken(IEnumerable<Claim> claims, IConfiguration _config)
         {
-            var key = _config.GetSection("JWT").GetValue<string>("SecretKey") ??
-           throw new InvalidOperationException("Invalid secret Key");
+            var key = Environment.GetEnvironmentVariable("JWT_SECRET_KEY_API_CRIMES") ??
+            throw new InvalidOperationException("Invalid secret Key");
 
             var privateKey = Encoding.UTF8.GetBytes(key);
 
@@ -54,7 +54,7 @@ namespace AppNotificacoesCrimesCidade.Application.Services
 
         public ClaimsPrincipal GetPrincipalFromExpiredToken(string token, IConfiguration _config)
         {
-            var secretKey = _config["JWT:SecretKey"] ?? throw new InvalidOperationException("Invalid key");
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY_API_CRIMES") ?? throw new InvalidOperationException("Invalid key");
 
             var tokenValidationParameters = new TokenValidationParameters
             {

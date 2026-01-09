@@ -1,9 +1,6 @@
 import 'package:geolocator/geolocator.dart';
 import 'package:notifica_crimes_frontend/data/repositories/map/map_repository.dart';
 import 'package:notifica_crimes_frontend/data/services/api/api_client.dart';
-import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/center_request_api_model.dart';
-import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/circle_request_api_model.dart';
-import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/location_bias_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
 import 'package:notifica_crimes_frontend/domain/models/place_detail/lat_lng_place_detail.dart';
 import 'package:notifica_crimes_frontend/domain/models/place_detail/place_detail.dart';
@@ -31,15 +28,8 @@ class MapRepositoryRemote implements MapRepository {
       var request = PlacePredictionRequestApiModel(
         input: text,
         sessionToken: sessionId,
-        locationBias: LocationBiasRequestApiModel(
-          circle: CircleRequestApiModel(
-            radius: 500,
-            center: CenterRequestApiModel(
-              latitude: latitude,
-              longitude: longitude,
-            ),
-          ),
-        ),
+        latitude: latitude,
+        longitude: longitude
       );
 
       var response = await apiClient.requestAutoComplete(request);

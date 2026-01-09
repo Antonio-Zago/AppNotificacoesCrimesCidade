@@ -304,11 +304,18 @@ class HomeViewModel extends ChangeNotifier {
       }
       print("------onChangedSearch id= " + sessionId);
 
-      //Aqui substituir pela latitude e longitude atual do usuário
+      var latitudeAtual = -23.22121364638136;
+      var longitudeAtual = -45.892987758946624;
+
+      if(localizacaoAtual != null){
+        latitudeAtual = localizacaoAtual!.latitude;
+        longitudeAtual = localizacaoAtual!.longitude;
+      }
+
       var resultPlacesPrediction = await mapRepository.requestAutoComplete(
         text,
-        -23.22121364638136,
-        -45.892987758946624,
+        latitudeAtual,
+        longitudeAtual,
         sessionId,
       );
 

@@ -12,6 +12,7 @@ import 'package:notifica_crimes_frontend/data/services/model/login_response/logi
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/armas_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/bens_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/ocorrencias_reponse/ocorrencia_api_model.dart';
+import 'package:notifica_crimes_frontend/data/services/model/place_detail_request/place_detail_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/place_detail_response/place_detail_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_request/place_prediction_request_api_model.dart';
 import 'package:notifica_crimes_frontend/data/services/model/prediction_place_response/place_prediction_api_model.dart';
@@ -26,26 +27,17 @@ class ApiClient {
 
   final Dio dio;
 
-  //Migrar esse código para o backend
   Future<Result<List<PlacePredictionApiModel>>> requestAutoComplete(
     PlacePredictionRequestApiModel request,
   ) async {
     try {
       List<PlacePredictionApiModel> listaPlacePrediction = [];
 
-      final response = await dio.post(
-        'https://places.googleapis.com/v1/places:autocomplete',
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/placePrediction/autoComplete',
         data: request.toJson(),
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": "",
-          },
-          extra: {'skipAuth': true},
-        ),
       );
-
-      var suggestions = response.data["suggestions"];
+      var suggestions = retorno.data["suggestions"];
 
       if (suggestions == null) {
         return Success(listaPlacePrediction);
@@ -175,20 +167,14 @@ class ApiClient {
     String sessionId,
   ) async {
     try {
-      final response = await dio.get(
-        'https://places.googleapis.com/v1/places/$placeId',
-        queryParameters: {"sessionToken": sessionId},
-        options: Options(
-          headers: {
-            "Content-Type": "application/json",
-            "X-Goog-Api-Key": "",
-            "X-Goog-FieldMask": "id,displayName,location",
-          },
-          extra: {'skipAuth': true},
-        ),
+      PlaceDetailRequestApiModel request = PlaceDetailRequestApiModel(placeId: placeId, sessionId: sessionId);
+
+      var retorno = await dio.post(
+        '${ApiRoutes.urlBase}/placePrediction/placeDetail',
+        data: request.toJson(),
       );
 
-      var placeDetail = PlaceDetailApiModel.fromJson(response.data);
+      var placeDetail = PlaceDetailApiModel.fromJson(retorno.data);
 
       return Success(placeDetail);
     } on DioException catch (exception) {

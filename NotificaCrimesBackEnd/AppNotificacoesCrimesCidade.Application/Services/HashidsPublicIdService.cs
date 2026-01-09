@@ -14,8 +14,9 @@ namespace AppNotificacoesCrimesCidade.Application.Services
         private readonly Hashids _hashids;
         public HashidsPublicIdService(IConfiguration config)
         {
+            var hashId = Environment.GetEnvironmentVariable("SALT_PARA_ID");
             // Salt secreta: defina no appsettings.json
-            _hashids = new Hashids(config["HashIds:Salt"], 8);
+            _hashids = new Hashids(hashId, 8);
         }
 
         public string ToPublic(int id) => _hashids.Encode(id);

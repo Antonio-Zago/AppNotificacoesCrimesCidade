@@ -15,6 +15,8 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 
 builder.Services.AddControllers();
+
+builder.Services.AddHttpClient();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
@@ -23,7 +25,7 @@ builder.Services.AddInfraestructure(builder.Configuration);
 
 FirebaseApp.Create(new AppOptions()
 {
-    Credential = GoogleCredential.FromFile("secrets/key.json")
+    Credential = GoogleCredential.GetApplicationDefault()
 });
 
 
@@ -40,6 +42,7 @@ builder.Services.AddScoped<IHashidsPublicIdService, HashidsPublicIdService>();
 builder.Services.AddScoped<IRouboService, RouboService>();
 builder.Services.AddScoped<ITokenService, TokenService>();
 builder.Services.AddScoped<ILocalService, LocalService>();
+builder.Services.AddScoped<IPlacePredictionService, PlacePredictionService>();
 builder.Services.AddScoped(typeof(IMapperBase<,,>), typeof(MapperBase<,,>));
 builder.Services.AddTransient<IQuery, Query>();
 

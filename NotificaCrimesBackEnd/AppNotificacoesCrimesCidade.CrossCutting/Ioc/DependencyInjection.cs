@@ -20,10 +20,12 @@ namespace AppNotificacoesCrimesCidade.CrossCutting.Ioc
         {
             services.AddAuthorization();
 
-            var secretKey = configuration["JWT:SecretKey"]
+            var secretKey = Environment.GetEnvironmentVariable("JWT_SECRET_KEY_API_CRIMES")
                    ?? throw new ArgumentException("Invalid secret key!!");
 
-            var secretKeyEmail = configuration["Email:SecretKey"]
+
+
+            var secretKeyEmail = Environment.GetEnvironmentVariable("EMAIL_SECRET_KEY_API_CRIMES")
                    ?? throw new ArgumentException("Invalid secret key!!");
 
             services
